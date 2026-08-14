@@ -1,0 +1,200 @@
+# DEV — Dixit Score Web
+
+Technické poznámky: *jak* to stavíme. Architektura, rozhodnutí a jejich důvody, konvence.
+Co se staví, je v [`SPEC.md`](SPEC.md).
+
+---
+
+## 1. Architektonická rozhodnutí
+
+Formát: rozhodnutí → důvod → důsledky. **Rozhodnutí se nemění bez zápisu sem.**
+
+### AD-1: Bez frameworku, bez build kroku
+
+**Rozhodnutí:** Nativní ES moduly načítané přímo prohlížečem. Žádný React/Vue, žádný
+bundler, žádné `node_modules` pro běh aplikace.
+
+**Důvod:** To, co dělá z webu instalovatelnou aplikaci — manifest, service worker, cache
+strategie — je čistě prohlížečové API a je identické s frameworkem i bez něj. Framework
+by k odpovědi na otázku „obstojí PWA místo nativní aplikace?" nepřispěl nic a jen
+prodloužil cestu k ní. Velikost aplikace (předloha má ~1 400 řádků Kotlinu) je hluboko
+pod hranicí, kde se framework vyplácí.
+
+**Důsledky:**
+- Žádná minifikace — při této velikosti irelevantní
+- ES moduly nelze spustit z `file://` kvůli CORS → pro vývoj je nutný HTTP server
+- Stav a překreslování si píšeme sami (AD-2)
+
+**Zvažované alternativy:** Vite + `vite-plugin-pwa` (přidává toolchain a generuje service
+worker, kterému pak nikdo nerozumí — jde proti cíli projektu). Compose Multiplatform for
+Web / Wasm (zachovalo by Kotlin, ale velký bundle a mizerná podpora na iOS).
+
+### AD-2: Jednosměrný tok stavu, překreslení celé obrazovky
+
+**Rozhodnutí:** Jeden stavový objekt. Akce vytvoří nový stav, `render(state)` překreslí
+obrazovku a otevřený dialog.
+
+```
+akce → nový state → render(state) → DOM
+```
+
+**Důvod:** Zrcadlí model MVVM/Compose z předlohy, takže mapování souborů je přímočaré
+(viz kap. 2). Při ≤ 12 hráčích je překreslení pod milisekundu — jemnější aktualizace
+by byla předčasná optimalizace.
+
+**Důsledky — dvě výjimky, které musí platit:**
+
+1. **Textová pole jsou nekontrolovaná.** Hodnota jména a skóre žije v DOM elementu a čte
+   se až při potvrzení. Bez toho by překreslení při každém stisku klávesy shodilo kurzor
+   z rozepsaného textu. Chování navenek je identické s předlohou.
+2. **Během tažení se nepřekresluje.** `reorderable-list.js` si po dobu gesta drží DOM sám;
+   do stavu zapisuje až na `pointerup`. Jinak by překreslení zabilo probíhající gesto —
+   je to tentýž problém, který v Reactu vzniká u „controlled" seznamů.
+
+### AD-3: Drag & drop přes Pointer Events
+
+**Rozhodnutí:** Přeskupení hráčů přes `pointerdown` / `pointermove` / `pointerup`
++ `setPointerCapture`.
+
+**Důvod:** HTML5 Drag and Drop API (`draggable="true"`, `dragstart`/`drop`) na dotykových
+zařízeních **nefunguje** — ani v Chrome pro Android, ani v iOS Safari; to API vzniklo pro
+myš. Pointer Events sjednocují myš, dotyk i pero a jsou nativní, bez závislosti. Přístup
+odpovídá tomu, co dělá `ReorderableList.kt` v předloze.
+
+**Důsledky:** Nutné CSS na položkách seznamu:
+
+```css
+touch-action: none;
+user-select: none;
+-webkit-touch-callout: none;   /* jinak iOS při podržení vyvolá kontextové menu */
+```
+
+**Zvažovaná alternativa:** SortableJS (vanilla, osvědčená, řeší auto-scroll i animace).
+Zamítnuto kvůli AD-5 — nemáme jedinou závislost a tahle by byla první. Pokud se ruční
+implementace ukáže jako problém, je to první kandidát na výjimku.
+
+### AD-4: Nativní `<dialog>`
+
+**Rozhodnutí:** Všechny dialogy jako `<dialog>` element.
+
+**Důvod:** Modalita, backdrop, zavření Escapem a focus trap zdarma od prohlížeče.
+
+**Důsledky:** Vyžaduje Safari 15.4+ (2022) a Chrome 37+. Pokrývá cílová zařízení.
+
+### AD-5: Nulové běhové závislosti
+
+**Rozhodnutí:** Aplikace nemá žádnou externí knihovnu. Testy běží na vestavěném
+`node:test` (Node 18+).
+
+**Důvod:** Politika závislostí — novou závislost zavádět jen s odůvodněním. Žádná zde
+odůvodněná není: drag & drop řeší Pointer Events, dialogy řeší `<dialog>`, testy řeší Node.
+Vedlejší efekt: nasazení je `git push`, nic se nebuilduje a nic nezastarává.
+
+---
+
+## 2. Struktura projektu
+
+Zrcadlí strukturu předlohy, aby šlo obojí srovnat vedle sebe:
+
+```
+index.html                    vstupní bod, <dialog> elementy, odkaz na manifest
+manifest.webmanifest
+sw.js                         service worker (ručně psaný, komentovaný)
+css/styles.css                barevné schéma, layout, safe-area
+js/app.js                     bootstrap: načtení stavu, navěšení handlerů, první render
+js/state.js                   ≙ GameViewModel.kt   — stav a akce
+js/rules.js                   ≙ bodovací logika    — čisté funkce, bez DOM
+js/storage.js                 serializace + localStorage
+js/i18n.js                    ≙ values/strings.xml, values-cs/strings.xml
+js/ui/game-screen.js          ≙ GameScreen.kt
+js/ui/player-card.js          ≙ PlayerRow
+js/ui/add-player-dialog.js    ≙ AddPlayerDialog.kt
+js/ui/edit-player-dialog.js   ≙ EditPlayerDialog.kt
+js/ui/scoring-dialog.js       ≙ ScoringDialog.kt (3 kroky)
+js/ui/reorderable-list.js     ≙ ReorderableList.kt
+icons/                        ikony manifestu
+test/                         testy pro node --test
+```
+
+Grafika se přebírá z předlohy: `dixit_score_logo.png` do hlavičky,
+`ds_launcher.png` jako podklad pro ikony manifestu.
+
+---
+
+## 3. Konvence
+
+- **Komentáře anglicky**, stručně. Dokumentace, popisy a commity česky.
+- `camelCase` proměnné a funkce, `PascalCase` konstruktory, `UPPER_SNAKE_CASE` konstanty.
+- Jeden soubor = jedna odpovědnost. Přes ~200 řádků je signál, že dělá dvě věci.
+- Žádné „magic values" — barvy, limity a texty do konstant nebo do `i18n.js`.
+- `const` před `let`; early return před zanořováním.
+- Funkce v `rules.js` jsou **čisté** — žádný DOM, žádný `localStorage`, žádný čas.
+  Je to jediný způsob, jak zůstanou testovatelné.
+
+---
+
+## 4. Testování
+
+```bash
+node --test
+```
+
+**TDD je povinné** pro `js/rules.js` a pro `serialize`/`deserialize` v `js/storage.js`:
+red (test selže) → green (minimální implementace) → refactor.
+
+Obal nad `localStorage` se netestuje — je to pět řádků a v Node `localStorage` není.
+UI a dotyková gesta se testují ručně na zařízení; automatizovat je se u aplikace téhle
+velikosti nevyplatí. Seznam ručních kritérií je v [`SPEC.md`](SPEC.md), kap. 11.
+
+---
+
+## 5. Lokální vývoj
+
+Aplikace nemá build krok. Potřebuje jen HTTP server — z `file://` nepoběží kvůli CORS
+u ES modulů a service worker se odtamtud nezaregistruje vůbec.
+
+```bash
+python -m http.server 8000
+```
+
+`localhost` je výjimka z požadavku na HTTPS, takže service worker funguje i bez certifikátu.
+
+**Pozor při vývoji:** service worker si agresivně cachuje. V DevTools →
+Application → Service Workers zapnout **Update on reload**, jinak budeš ladit starou verzi
+a divit se.
+
+---
+
+## 6. Nasazení
+
+GitHub Pages z repozitáře `Worsik/dixit-score-web`. Nasazení = push; nic se nebuilduje.
+
+HTTPS je podmínka, aby se service worker zaregistroval. GitHub Pages ho poskytuje.
+
+**Po každém nasazení** je potřeba zvýšit verzi cache v `sw.js` — jinak uživatelé
+s nainstalovanou aplikací dostanou starou verzi ze své cache.
+
+---
+
+## 7. iOS specifika
+
+Řeší se od začátku, retrofit je dražší:
+
+- `viewport-fit=cover` v meta tagu + `env(safe-area-inset-*)` v CSS — kvůli čelu a spodní
+  liště iPhonu
+- `-webkit-touch-callout: none` na položkách seznamu (viz AD-3)
+- Safari instalaci sama nenabídne → v aplikaci návod „Sdílet → Přidat na plochu"
+- Aplikaci na iOS umí nainstalovat **jen Safari**, žádný jiný prohlížeč
+
+---
+
+## 8. Rizika
+
+| Riziko | Dopad | Ošetření |
+|--------|-------|----------|
+| iOS Safari zahodí záložku na pozadí | Ztráta rozehrané hry | Persistence (`SPEC.md` kap. 7) |
+| Long-press na iOS vyvolá kontextové menu místo tažení | Rozbité přeskupování | CSS dle AD-3, ověřit na skutečném iPhonu |
+| Překreslení během tažení shodí gesto | Rozbité přeskupování | Výjimka 2 v AD-2 |
+| Service worker si zacachuje starou verzi | Uživatel nedostane opravy | Verzovaný název cache, úklid při `activate`, zvýšit verzi při každém nasazení |
+| Ruční drag & drop se ukáže jako nespolehlivý | Klíčová funkce nefunguje | První kandidát na výjimku z AD-5 je SortableJS |
+| Ověří se jen Android, iPhone ne | Klíčová otázka projektu zůstane nezodpovězená | Ruční test na iPhonu je akceptační kritérium, ne bonus |
