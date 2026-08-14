@@ -135,7 +135,11 @@ a **Přidat hráče** (ikona +).
 případně „Vypravěč" / „Další vypravěč" drobným písmem. Vpravo skóre velkým písmem.
 Klepnutí otevře dialog úpravy.
 
-**Dolní lišta:** vystředěné tlačítko s ikonou hvězdy a textem **„Bodování za kolo N"**.
+**Dolní lišta:** vystředěné tlačítko s ikonou hvězdy a textem `scoring_button_round` —
+cs „Hodnocení pro *N*. kolo", en „Scoring for round *N*".
+
+> **Texty se opisují doslova** z `values/strings.xml` a `values-cs/strings.xml`.
+> Citace v této kapitole jsou informativní; závazný je obsah zdrojových souborů.
 
 ### 4.2 Paleta barev
 
@@ -164,15 +168,15 @@ Pole pro jméno, paleta, oddělovač, řádek pro skóre: **−**, číselné po
 - **+ / −** změní hodnotu o 1; nečitelná hodnota se čte jako 0
 - Při uložení se nečitelná hodnota skóre **ignoruje** a zůstane původní
 - **Uložit** je neaktivní při prázdném jméně
-- **Smazat** (červené) otevře potvrzení s textem
-  „Opravdu chcete smazat %s? Tuto akci nelze vrátit zpět."
+- **Smazat** (červené) otevře potvrzení `delete_player_confirmation_message` —
+  cs „Opravdu si přejete smazat hráče *%1$s*? Tuto akci nelze vrátit."
 - Po smazání se `turnOrder` přepočítá; byl-li smazaný hráč vypravěčem, vypravěčem se
   stává ten, kdo byl označen jako další
 
 ### 5.3 Bodování — krok 1: Výběr
 
 - Nahoře „Vypravěč: *jméno*", vpravo jeho průběžné `+N`
-- Otázka „Kteří hráči uhodli vypravěčovu kartu?"
+- Otázka `scoring_dialog_question` — cs „Kteří hráči poznali vypravěčovu kartu?"
 - Třístavové zaškrtávátko **„Všichni"**: prázdný výběr → vypnuto, úplný → zapnuto,
   částečný → neurčitý stav. Klepnutí při zapnutém stavu odznačí vše, jinak označí vše.
 - Seznam hlasujících se zaškrtávátkem a průběžným `+N`
@@ -182,7 +186,7 @@ Uhodli-li všichni, **Potvrdit** vede rovnou na krok 3.
 
 ### 5.4 Bodování — krok 2: Bonusové body
 
-- „Zbývá rozdělit: *N* bodů" (odpočítává se)
+- `scoring_bonus_votes_points_to_distribute` — cs „Zbývá rozdělit: *N* b." (odpočítává se)
 - Mřížka **3 sloupce** s kandidáty, kteří ještě nebyli vybráni; klepnutím se hráč přesune
   do spodního seznamu
 - Spodní seznam se objeví, až je někdo vybraný: ikona koše (odebere hráče i jeho body),
