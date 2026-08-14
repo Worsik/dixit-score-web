@@ -41,7 +41,9 @@ od Tasku 1.
 
 ### Etapa 1
 
-- [ ] `js/rules.js` + testy (TDD) — herní pravidla
+- [x] `js/rules.js` — rotace vypravěče (8 testů)
+- [ ] `js/rules.js` — bodování kola
+- [ ] `js/rules.js` — správa hráčů, nová hra, zápis bodů
 - [ ] `js/state.js` — stav a akce
 - [ ] `js/storage.js` + testy (TDD) — persistence
 - [ ] `js/i18n.js` + testy — texty en/cs

@@ -139,6 +139,10 @@ Grafika se přebírá z předlohy: `dixit_score_logo.png` do hlavičky,
 node --test
 ```
 
+Kořenový `package.json` obsahuje výhradně `{"type":"module"}`. Bez něj Node čte `.js`
+jako CommonJS a `import` v testech selže. **Nesmí do něj nikdy přibýt závislost** —
+neruší AD-5, protože do prohlížeče se nedostane a aplikace ho k běhu nepotřebuje.
+
 **TDD je povinné** pro `js/rules.js` a pro `serialize`/`deserialize` v `js/storage.js`:
 red (test selže) → green (minimální implementace) → refactor.
 
