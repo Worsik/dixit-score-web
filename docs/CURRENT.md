@@ -9,23 +9,21 @@
 
 ## Kde jsme
 
-**Etapa 1 je hotová a ověřená.** Aplikace běží v prohlížeči: dají se přidávat, upravovat
-a mazat hráči, vybírat jim barvu, ručně opravovat skóre — a rozehraná hra přežije
-zavření stránky. Bodování a PWA vrstva zatím nejsou.
+**Etapy 1 a 2 jsou hotové a ověřené — aplikace umí odehrát celou partii Dixitu.**
+Správa hráčů, bodování o třech krocích včetně bonusových hlasů, rotace vypravěče,
+nová hra a persistence. Chybí už jen PWA vrstva a přeskupení hráčů tažením.
 
 Práce je rozdělená do tří etap. Plán vzniká vždy až pro následující etapu, ne dopředu.
 
 | Etapa | Obsah | Stav |
 |-------|-------|------|
 | 1 | Jádro (pravidla, persistence, texty, stav) a správa hráčů | **hotovo** |
-| 2 | Bodovací dialog o třech krocích, nová hra | plán nenapsán |
+| 2 | Bodovací dialog o třech krocích, nová hra | **hotovo** |
 | 3 | Přeskupení tažením, mřížka nad 6 hráčů, PWA vrstva, nasazení | plán nenapsán |
-
-Kód etapy 1 je ve větvi `etapa-1-jadro-a-hraci`, do `master` zatím nesloučen.
 
 ## Další krok
 
-Sloučit etapu 1 do `master` a sestavit plán etapy 2 — bodovací dialog a nová hra.
+Sestavit plán etapy 3 — přeskupení tažením, mřížka nad 6 hráčů, PWA vrstva a nasazení.
 
 ## Hotovo
 
@@ -52,15 +50,20 @@ Sloučit etapu 1 do `master` a sestavit plán etapy 2 — bodovací dialog a nov
       s hláškou, úprava jména/barvy/skóre, blokace prázdného jména, smazání s potvrzením,
       předání role vypravěče, přežití obnovení stránky
 
-**Testy: 35, všechny zelené.**
-
-## Zbývá
-
 ### Etapa 2
 
-- [ ] Plán etapy 2
-- [ ] `js/ui/scoring-dialog.js` — bodování o třech krocích
-- [ ] Nová hra s výběrem vypravěče (tlačítko „Nová hra" zatím nedělá nic)
+- [x] Plán etapy 2 — `docs/plans/2026-08-15-etapa-2-bodovani.md`
+- [x] `js/rules.js` — `canConfirmBonusVotes()` (4 testy)
+- [x] `js/state.js` — akce bodovacího dialogu a nové hry
+- [x] `js/ui/scoring-dialog.js` — bodování o třech krocích
+- [x] Nová hra s výběrem vypravěče
+- [x] Ověřeno v prohlížeči: bodování bez uhodnutí / s částí / se všemi, bonusové hlasy
+      včetně blokace potvrzení, návrat ze souhrnu zachová bonusy, zrušení nic nezapíše,
+      nová hra vynuluje skóre a nastaví vypravěče, okrajové stavy (0 hráčů, 1 hráč)
+
+**Testy: 39, všechny zelené.**
+
+## Zbývá
 
 ### Etapa 3
 
@@ -88,3 +91,4 @@ Sloučit etapu 1 do `master` a sestavit plán etapy 2 — bodovací dialog a nov
 | 2026-08-14 | Probráno zadání, schválen návrh, založen repozitář a dokumentace projektu |
 | 2026-08-14 | Napsán plán etapy 1; při jeho psaní opraveny parafrázované texty v `SPEC.md` na doslovné znění z předlohy |
 | 2026-08-15 | Implementována a ověřena etapa 1 — jádro a správa hráčů |
+| 2026-08-15 | Implementována a ověřena etapa 2 — bodování a nová hra |

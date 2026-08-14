@@ -1,12 +1,28 @@
-import { addPlayer, removePlayer, MAX_PLAYERS } from './rules.js';
+import {
+  addPlayer, removePlayer, startNewGame, applyScores, scoreRound,
+  pointsToDistribute as countPointsToDistribute, MAX_PLAYERS,
+} from './rules.js';
 import { save, load } from './storage.js';
 import { DEFAULT_COLOR } from './palette.js';
+
+const EMPTY_SCORING = {
+  isOpen: false,
+  step: 'selection',        // 'selection' | 'bonus' | 'summary'
+  storytellerId: null,
+  voterIds: [],
+  selectedIds: [],
+  chosenForBonus: [],       // in the order they were picked
+  bonusAssignments: {},     // playerId -> points
+  pointsToDistribute: 0,
+};
 
 let state = {
   players: [],
   roundNumber: 1,
   addDialog: { isOpen: false, selectedColor: DEFAULT_COLOR },
   editDialog: { isOpen: false, playerId: null, selectedColor: DEFAULT_COLOR, confirmDelete: false },
+  scoringDialog: { ...EMPTY_SCORING },
+  newGameMenuOpen: false,
   message: null,
 };
 
@@ -114,5 +130,152 @@ export function confirmDeletePlayer() {
     editDialog: { ...state.editDialog, isOpen: false, confirmDelete: false },
   });
 }
+
+// --- Scoring ---
+
+/** Scoring needs a storyteller; with no players the button does nothing. */
+export function openScoring() {
+  const storyteller = state.players.find((it) => it.isStoryteller);
+  if (!storyteller) return;
+  update({
+    scoringDialog: {
+      ...EMPTY_SCORING,
+      isOpen: true,
+      storytellerId: storyteller.id,
+      voterIds: state.players.filter((it) => it.id !== storyteller.id).map((it) => it.id),
+    },
+  });
+}
+
+export const closeScoring = () =>
+  update({ scoringDialog: { ...state.scoringDialog, isOpen: false } });
+
+export function toggleVoter(playerId, isSelected) {
+  const { selectedIds } = state.scoringDialog;
+  const next = isSelected
+    ? [...selectedIds, playerId]
+    : selectedIds.filter((id) => id !== playerId);
+  update({ scoringDialog: { ...state.scoringDialog, selectedIds: next } });
+}
+
+export const selectAllVoters = (isSelected) =>
+  update({
+    scoringDialog: {
+      ...state.scoringDialog,
+      selectedIds: isSelected ? [...state.scoringDialog.voterIds] : [],
+    },
+  });
+
+/** True when every voter guessed the storyteller's card. */
+function everyoneGuessed({ voterIds, selectedIds }) {
+  return selectedIds.length === voterIds.length && voterIds.length > 0;
+}
+
+export function confirmSelection() {
+  const { voterIds, selectedIds } = state.scoringDialog;
+  const allGuessed = everyoneGuessed(state.scoringDialog);
+
+  // When everybody guessed there is nothing to distribute - skip straight to the summary.
+  update({
+    scoringDialog: {
+      ...state.scoringDialog,
+      step: allGuessed ? 'summary' : 'bonus',
+      pointsToDistribute: allGuessed ? 0 : countPointsToDistribute(voterIds, selectedIds),
+      chosenForBonus: [],
+      bonusAssignments: {},
+    },
+  });
+}
+
+export const backToSelection = () =>
+  update({ scoringDialog: { ...state.scoringDialog, step: 'selection' } });
+
+export function addBonusPlayer(playerId) {
+  if (state.scoringDialog.chosenForBonus.includes(playerId)) return;
+  update({
+    scoringDialog: {
+      ...state.scoringDialog,
+      chosenForBonus: [...state.scoringDialog.chosenForBonus, playerId],
+    },
+  });
+}
+
+export function removeBonusPlayer(playerId) {
+  const bonusAssignments = { ...state.scoringDialog.bonusAssignments };
+  delete bonusAssignments[playerId];
+  update({
+    scoringDialog: {
+      ...state.scoringDialog,
+      chosenForBonus: state.scoringDialog.chosenForBonus.filter((id) => id !== playerId),
+      bonusAssignments,
+    },
+  });
+}
+
+export function incrementBonus(playerId) {
+  const { bonusAssignments, pointsToDistribute } = state.scoringDialog;
+  const assigned = Object.values(bonusAssignments).reduce((sum, value) => sum + value, 0);
+  if (assigned >= pointsToDistribute) return;
+  update({
+    scoringDialog: {
+      ...state.scoringDialog,
+      bonusAssignments: {
+        ...bonusAssignments, [playerId]: (bonusAssignments[playerId] ?? 0) + 1,
+      },
+    },
+  });
+}
+
+export function decrementBonus(playerId) {
+  const { bonusAssignments } = state.scoringDialog;
+  if ((bonusAssignments[playerId] ?? 0) <= 0) return;
+  update({
+    scoringDialog: {
+      ...state.scoringDialog,
+      bonusAssignments: {
+        ...bonusAssignments, [playerId]: bonusAssignments[playerId] - 1,
+      },
+    },
+  });
+}
+
+export const confirmBonusVotes = () =>
+  update({ scoringDialog: { ...state.scoringDialog, step: 'summary' } });
+
+/**
+ * Back from the summary. Mirrors the original: bonus assignments are NOT reset,
+ * so returning to the bonus step shows them again.
+ */
+export function backFromSummary() {
+  update({
+    scoringDialog: {
+      ...state.scoringDialog,
+      step: everyoneGuessed(state.scoringDialog) ? 'selection' : 'bonus',
+    },
+  });
+}
+
+export function confirmScores() {
+  const { storytellerId, voterIds, selectedIds, bonusAssignments } = state.scoringDialog;
+  const { storytellerPoints, voterPoints } =
+    scoreRound({ voterIds, selectedIds, bonusAssignments });
+
+  update({
+    players: applyScores(state.players, { storytellerId, storytellerPoints, voterPoints }),
+    roundNumber: state.roundNumber + 1,
+    scoringDialog: { ...state.scoringDialog, isOpen: false },
+  });
+}
+
+// --- New game ---
+
+export const toggleNewGameMenu = (isOpen) => update({ newGameMenuOpen: isOpen });
+
+export const startGameWith = (playerId) =>
+  update({
+    players: startNewGame(state.players, playerId),
+    roundNumber: 1,
+    newGameMenuOpen: false,
+  });
 
 export const clearMessage = () => update({ message: null });
