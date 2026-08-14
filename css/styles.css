@@ -65,6 +65,13 @@ body {
   list-style: none;
 }
 
+/* Nad 6 hráčů se přepíná na dvousloupcovou mřížku, kde se netáhne. */
+.player-list.is-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: start;
+}
+
 .player-card {
   display: flex;
   align-items: center;
@@ -73,6 +80,18 @@ body {
   border: 1px solid var(--outline);
   border-radius: 12px;
   cursor: pointer;
+  /* pan-y ponechává scrollování; tažení si přebírá reorderable-list.js.
+     Bez -webkit-touch-callout vyvolá podržení na iOS kontextové menu. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.player-card.is-dragging {
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .player-card-info { display: flex; flex-direction: column; }
@@ -297,3 +316,21 @@ dialog hr { width: 100%; border: none; border-top: 1px solid var(--outline); mar
 }
 
 #toast.is-visible { opacity: 1; }
+
+/* --- Nápověda k instalaci na iOS --- */
+
+#ios-hint {
+  position: fixed;
+  left: 50%;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: #322F35;
+  color: #F5EFF7;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  max-width: 90vw;
+  cursor: pointer;
+}
+
+#ios-hint[hidden] { display: none; }

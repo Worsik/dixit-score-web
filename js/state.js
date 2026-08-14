@@ -1,6 +1,6 @@
 import {
-  addPlayer, removePlayer, startNewGame, applyScores, scoreRound,
-  pointsToDistribute as countPointsToDistribute, MAX_PLAYERS,
+  addPlayer, removePlayer, movePlayer as reorderPlayers, startNewGame, applyScores,
+  scoreRound, pointsToDistribute as countPointsToDistribute, MAX_PLAYERS,
 } from './rules.js';
 import { save, load } from './storage.js';
 import { DEFAULT_COLOR } from './palette.js';
@@ -130,6 +130,10 @@ export function confirmDeletePlayer() {
     editDialog: { ...state.editDialog, isOpen: false, confirmDelete: false },
   });
 }
+
+/** Reorders players after a drag; roles are recomputed from the new turn order. */
+export const movePlayer = (from, to) =>
+  update({ players: reorderPlayers(state.players, from, to) });
 
 // --- Scoring ---
 

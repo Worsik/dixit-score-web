@@ -64,10 +64,13 @@ odpovídá tomu, co dělá `ReorderableList.kt` v předloze.
 **Důsledky:** Nutné CSS na položkách seznamu:
 
 ```css
-touch-action: none;
+touch-action: pan-y;           /* viz AD-9 - none by zabilo scrollování */
 user-select: none;
 -webkit-touch-callout: none;   /* jinak iOS při podržení vyvolá kontextové menu */
 ```
+
+> **Revidováno v AD-9.** Původně zde bylo `touch-action: none`; při implementaci se
+> ukázalo, že by to znemožnilo scrollování seznamu prstem.
 
 **Zvažovaná alternativa:** SortableJS (vanilla, osvědčená, řeší auto-scroll i animace).
 Zamítnuto kvůli AD-5 — nemáme jedinou závislost a tahle by byla první. Pokud se ruční
@@ -131,6 +134,38 @@ by při každém stisku klávesy překreslovala dialog a shazovala kurzor.
 
 **Důsledky:** Každý nový dialog s textovým polem musí předat jeho `id` do `syncDialog`.
 Ověřeno testem v prohlížeči: napsat jméno → vybrat barvu → jméno zůstává.
+
+### AD-9: Tažení versus scrollování
+
+*(Rozhodnuto při implementaci etapy 3.)*
+
+**Rozhodnutí:** Karty mají `touch-action: pan-y` a `reorderable-list.js` si registruje
+`touchmove` s `{ passive: false }`, ve kterém volá `preventDefault()` **jen po dobu tažení**.
+
+**Důvod:** `touch-action: none` (původní znění AD-3) by sice tažení umožnil, ale zabil by
+scrollování seznamu prstem — což u šesti karet na malém displeji vadí. Protože prst musí
+před zahájením tažení 500 ms stát, prohlížeč do té doby scrollování nezahájí a gesto
+se stihne převzít.
+
+**Důsledky:** `preventDefault` v neaktivním `touchmove` posluchači nesmí být volán
+bezpodmínečně, jinak se scrollování rozbije. Chování je ověřitelné jen na skutečném
+dotykovém zařízení — v prohlížeči na počítači se tenhle konflikt neprojeví.
+
+### AD-10: Ikony jako JPEG
+
+*(Rozhodnuto při implementaci etapy 3.)*
+
+**Rozhodnutí:** Ikony manifestu a logo v hlavičce jsou **JPEG**, nikoli PNG.
+Favicon zůstává PNG.
+
+**Důvod:** Předlohy (`dixit_score_ico.png`, `dixit_score_logo.png`) jsou fotografické
+ilustrace **bez alfa kanálu**, takže PNG na nich komprimuje mizerně — ikona 512×512 měla
+558 kB, jako JPEG 47 kB. Celá sada klesla z více než 2 MB na **132 kB**. U aplikace,
+která se má celá vejít do offline cache, je to podstatný rozdíl.
+
+**Důsledky:** Manifest deklaruje `"type": "image/jpeg"`. Kdyby některý zdroj v budoucnu
+průhlednost měl, musí zůstat PNG — JPEG alfu neumí. Maskable varianta má 20% bezpečnou
+zónu a béžové pozadí, aby ji ořez maskou neukousl.
 
 **Stejná past u třístavového zaškrtávátka** „Všichni" (etapa 2): `indeterminate` je
 vlastnost DOM, ne HTML atribut — z markupu ji nastavit nelze. Stav se proto vykreslí

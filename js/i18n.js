@@ -34,6 +34,8 @@ export const STRINGS = {
     confirm_button: 'Confirm',
     edit_score_dialog_title: 'Edit Scores',
     max_players_reached: 'You have reached the maximum number of players',
+    // Not in the Android original - Safari cannot offer installation on its own.
+    ios_install_hint: 'To install: Share → Add to Home Screen',
   },
   cs: {
     app_name: 'Dixit Skóre',
@@ -68,6 +70,7 @@ export const STRINGS = {
     confirm_button: 'Potvrdit',
     edit_score_dialog_title: 'Upravit skóre',
     max_players_reached: 'Dosáhli jste maximálního počtu hráčů',
+    ios_install_hint: 'Instalace: Sdílet → Přidat na plochu',
   },
 };
 
