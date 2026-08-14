@@ -132,6 +132,11 @@ by při každém stisku klávesy překreslovala dialog a shazovala kurzor.
 **Důsledky:** Každý nový dialog s textovým polem musí předat jeho `id` do `syncDialog`.
 Ověřeno testem v prohlížeči: napsat jméno → vybrat barvu → jméno zůstává.
 
+**Stejná past u třístavového zaškrtávátka** „Všichni" (etapa 2): `indeterminate` je
+vlastnost DOM, ne HTML atribut — z markupu ji nastavit nelze. Stav se proto vykreslí
+do `data-state` a `refreshTriStateCheckbox()` v `js/app.js` ho po každém překreslení
+překlopí do vlastnosti.
+
 ---
 
 ## 2. Struktura projektu

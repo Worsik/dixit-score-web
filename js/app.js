@@ -3,18 +3,24 @@ import {
   openAddDialog, closeAddDialog, setAddColor, confirmAddPlayer,
   openEditDialog, closeEditDialog, setEditColor, confirmEditPlayer,
   askDeleteConfirm, cancelDeleteConfirm, confirmDeletePlayer,
+  openScoring, closeScoring, toggleVoter, selectAllVoters, confirmSelection,
+  backToSelection, addBonusPlayer, removeBonusPlayer, incrementBonus, decrementBonus,
+  confirmBonusVotes, backFromSummary, confirmScores,
+  toggleNewGameMenu, startGameWith,
   clearMessage,
 } from './state.js';
 import { t } from './i18n.js';
 import { renderGameScreen } from './ui/game-screen.js';
 import { renderAddPlayerDialog } from './ui/add-player-dialog.js';
 import { renderEditPlayerDialog, renderConfirmDeleteDialog } from './ui/edit-player-dialog.js';
+import { renderScoringDialog } from './ui/scoring-dialog.js';
 
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
 const addDialog = document.querySelector('#add-dialog');
 const editDialog = document.querySelector('#edit-dialog');
 const confirmDeleteDialog = document.querySelector('#confirm-delete-dialog');
+const scoringDialog = document.querySelector('#scoring-dialog');
 
 // --- Rendering ---
 
@@ -63,7 +69,16 @@ function render() {
   syncDialog(confirmDeleteDialog, state.editDialog.confirmDelete && Boolean(editedPlayer),
     () => renderConfirmDeleteDialog(editedPlayer));
 
+  syncDialog(scoringDialog, state.scoringDialog.isOpen, () => renderScoringDialog(state));
+  refreshTriStateCheckbox();
+
   if (state.message) showToast(t(state.message));
+}
+
+// "indeterminate" is a DOM property, not an attribute - it cannot come from the markup.
+function refreshTriStateCheckbox() {
+  const box = scoringDialog.querySelector('#select-all-voters');
+  if (box) box.indeterminate = box.dataset.state === 'indeterminate';
 }
 
 // Stands in for the Android Snackbar. Not alert() - that blocks and looks nothing like it.
@@ -81,12 +96,25 @@ function showToast(text) {
 // --- Main screen ---
 
 app.addEventListener('click', (event) => {
-  if (event.target.closest('[data-action="add-player"]')) {
-    openAddDialog();
-    return;
+  if (event.target.closest('[data-action="add-player"]')) return openAddDialog();
+  if (event.target.closest('[data-action="scoring"]')) return openScoring();
+
+  if (event.target.closest('[data-action="new-game"]')) {
+    return toggleNewGameMenu(!getState().newGameMenuOpen);
   }
+
+  const menuChoice = event.target.closest('[data-new-game-player]');
+  if (menuChoice) return startGameWith(menuChoice.dataset.newGamePlayer);
+
   const card = event.target.closest('[data-player-id]');
   if (card) openEditDialog(card.dataset.playerId);
+});
+
+// Clicking anywhere else closes the new game menu, like the original dropdown.
+document.addEventListener('click', (event) => {
+  if (!getState().newGameMenuOpen) return;
+  if (event.target.closest('.menu')) return;
+  toggleNewGameMenu(false);
 });
 
 // --- Add player dialog ---
@@ -160,6 +188,43 @@ confirmDeleteDialog.addEventListener('submit', (event) => event.preventDefault()
 
 confirmDeleteDialog.addEventListener('close', () => {
   if (getState().editDialog.confirmDelete) cancelDeleteConfirm();
+});
+
+// --- Scoring dialog ---
+
+scoringDialog.addEventListener('change', (event) => {
+  const { voter } = event.target.dataset;
+  if (voter) return toggleVoter(voter, event.target.checked);
+  if (event.target.id === 'select-all-voters') {
+    // Clicking while fully checked clears the selection, otherwise it selects everyone.
+    selectAllVoters(event.target.dataset.state !== 'on');
+  }
+});
+
+scoringDialog.addEventListener('click', (event) => {
+  const button = event.target.closest('button');
+  if (!button) return;
+  const d = button.dataset;
+
+  if (d.bonusAdd) return addBonusPlayer(d.bonusAdd);
+  if (d.bonusRemove) return removeBonusPlayer(d.bonusRemove);
+  if (d.bonusUp) return incrementBonus(d.bonusUp);
+  if (d.bonusDown) return decrementBonus(d.bonusDown);
+
+  switch (d.action) {
+    case 'scoring-cancel': return closeScoring();
+    case 'selection-confirm': return confirmSelection();
+    case 'bonus-back': return backToSelection();
+    case 'bonus-confirm': return confirmBonusVotes();
+    case 'summary-back': return backFromSummary();
+    case 'summary-confirm': return confirmScores();
+  }
+});
+
+scoringDialog.addEventListener('submit', (event) => event.preventDefault());
+
+scoringDialog.addEventListener('close', () => {
+  if (getState().scoringDialog.isOpen) closeScoring();
 });
 
 // --- Start ---

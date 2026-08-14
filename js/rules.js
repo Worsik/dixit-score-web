@@ -50,6 +50,16 @@ export function scoreRound({ voterIds, selectedIds, bonusAssignments = {} }) {
   return { storytellerPoints: flatRound ? 0 : 3, voterPoints };
 }
 
+/**
+ * Bonus votes may be confirmed only when every point has been handed out
+ * and nobody on the list sits at zero.
+ */
+export function canConfirmBonusVotes(pointsToDistribute, chosenIds, assignments) {
+  const assigned = Object.values(assignments).reduce((sum, value) => sum + value, 0);
+  const everyoneScored = chosenIds.every((id) => (assignments[id] ?? 0) > 0);
+  return assigned === pointsToDistribute && everyoneScored;
+}
+
 /** Rewrites turnOrder to match the position in the array. */
 export function reindexTurnOrder(players) {
   return players.map((player, index) => ({ ...player, turnOrder: index }));

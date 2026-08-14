@@ -2,7 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   updateStorytellerRoles, pointsToDistribute, scoreRound, MAX_PLAYERS, GRID_THRESHOLD,
-  reindexTurnOrder, addPlayer, removePlayer, movePlayer, startNewGame, applyScores
+  reindexTurnOrder, addPlayer, removePlayer, movePlayer, startNewGame, applyScores,
+  canConfirmBonusVotes
 } from '../js/rules.js';
 
 // Test helper: builds a player with sensible defaults.
@@ -166,4 +167,22 @@ test('zápis bodů přičte body a posune vypravěče na označeného dalšího'
   assert.deepEqual(result.map((it) => it.score), [8, 8, 5]);
   assert.equal(result[1].isStoryteller, true);
   assert.equal(result[2].isNextStoryteller, true);
+});
+
+// --- Potvrzení bonusových bodů ---
+
+test('bonusy nelze potvrdit, dokud zbývají nerozdané body', () => {
+  assert.equal(canConfirmBonusVotes(2, ['b'], { b: 1 }), false);
+});
+
+test('bonusy nelze potvrdit, když vybraný hráč nemá ani bod', () => {
+  assert.equal(canConfirmBonusVotes(2, ['b', 'c'], { b: 2, c: 0 }), false);
+});
+
+test('bonusy lze potvrdit, když jsou body rozdány a každý vybraný má aspoň bod', () => {
+  assert.equal(canConfirmBonusVotes(2, ['b', 'c'], { b: 1, c: 1 }), true);
+});
+
+test('bez bodů k rozdělení a bez vybraných hráčů lze potvrdit', () => {
+  assert.equal(canConfirmBonusVotes(0, [], {}), true);
 });
