@@ -90,6 +90,48 @@ implementace ukáže jako problém, je to první kandidát na výjimku.
 odůvodněná není: drag & drop řeší Pointer Events, dialogy řeší `<dialog>`, testy řeší Node.
 Vedlejší efekt: nasazení je `git push`, nic se nebuilduje a nic nezastarává.
 
+### AD-6: Escapování uživatelského textu
+
+*(Rozhodnuto při implementaci etapy 1.)*
+
+**Rozhodnutí:** Jména hráčů procházejí `escapeHtml()` z `js/ui/html.js` všude, kde se
+vypisují.
+
+**Důvod:** UI se skládá z řetězců a vkládá přes `innerHTML`. Jméno hráče je uživatelský
+vstup, takže bez escapování by jméno `<img src=x onerror=alert(1)>` byl spustitelný kód.
+Riziko je tu malé (jeden uživatel, žádný server), ale ošetření stojí deset řádků a jeho
+absence by byla chyba, kterou by review právem vytklo.
+
+**Důsledky:** Každý nový modul, který vypisuje jméno hráče, musí `escapeHtml` použít.
+Barvy a skóre escapování nepotřebují — pocházejí z pevné palety a z `Number.parseInt`.
+
+### AD-7: Toast místo Snackbaru
+
+*(Rozhodnuto při implementaci etapy 1.)*
+
+**Rozhodnutí:** Hlášky se zobrazují vlastním `#toast` prvkem, ne `alert()`.
+
+**Důvod:** Předloha používá Material Snackbar — nemodální proužek dole, který sám zmizí.
+`alert()` blokuje vlákno, vypadá jako systémová chyba a musí se odklikávat; chování 1:1
+by nesplňoval.
+
+**Důsledky:** ~20 řádků CSS a JS navíc. Hláška zmizí po 3 sekundách a teprve pak se
+uklidí ze stavu.
+
+### AD-8: Nekontrolovaná textová pole a jejich obnova
+
+*(Rozhodnuto při implementaci etapy 1.)*
+
+**Rozhodnutí:** `syncDialog()` v `js/app.js` si před překreslením dialogu uloží hodnoty
+textových polí a po překreslení je vrátí zpět.
+
+**Důvod:** Přímý důsledek výjimky 1 v AD-2. Bez toho by výběr barvy — což je změna
+stavu, tedy překreslení — smazal rozepsané jméno hráče. Alternativa (držet text ve stavu)
+by při každém stisku klávesy překreslovala dialog a shazovala kurzor.
+
+**Důsledky:** Každý nový dialog s textovým polem musí předat jeho `id` do `syncDialog`.
+Ověřeno testem v prohlížeči: napsat jméno → vybrat barvu → jméno zůstává.
+
 ---
 
 ## 2. Struktura projektu
@@ -138,6 +180,10 @@ Grafika se přebírá z předlohy: `dixit_score_logo.png` do hlavičky,
 ```bash
 node --test
 ```
+
+Kořenový `package.json` obsahuje výhradně `{"type":"module"}`. Bez něj Node čte `.js`
+jako CommonJS a `import` v testech selže. **Nesmí do něj nikdy přibýt závislost** —
+neruší AD-5, protože do prohlížeče se nedostane a aplikace ho k běhu nepotřebuje.
 
 **TDD je povinné** pro `js/rules.js` a pro `serialize`/`deserialize` v `js/storage.js`:
 red (test selže) → green (minimální implementace) → refactor.

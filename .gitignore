@@ -16,3 +16,6 @@ package-lock.json
 # Lokální
 *.local
 *.log
+
+# Artefakty z testování v prohlížeči
+.playwright-mcp/

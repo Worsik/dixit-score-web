@@ -1,0 +1,196 @@
+:root {
+  --background: #F6D58E;
+  --on-background: #1C1B1F;
+  --outline: #79747E;
+  --primary: #4A4A4A;
+  --on-primary: #FFFFFF;
+  --error: #B3261E;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--on-background);
+  font-family: system-ui, sans-serif;
+  /* Keeps content clear of the notch and the home indicator. */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+           env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* --- Lišty --- */
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.top-bar img {
+  height: 150px;
+  max-width: 55%;
+  object-fit: contain;
+}
+
+.top-bar-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.bottom-bar {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  background: var(--primary);
+}
+
+/* --- Seznam hráčů --- */
+
+.player-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px 16px;
+  margin: 0;
+  list-style: none;
+}
+
+.player-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.player-card-info { display: flex; flex-direction: column; }
+.player-card-name { font-size: 1.5rem; }
+.player-card-role { font-size: 0.75rem; }
+.player-card-score { font-size: 2rem; }
+
+/* --- Tlačítka --- */
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.button-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+}
+
+.button-text {
+  background: none;
+  border: none;
+  color: var(--on-background);
+  padding: 8px 12px;
+}
+
+.button-danger { color: var(--error); }
+.button-delete { background: var(--error); }
+
+/* --- Dialogy --- */
+
+dialog {
+  border: none;
+  border-radius: 16px;
+  background: var(--background);
+  color: var(--on-background);
+  max-width: 90vw;
+  padding: 24px;
+}
+
+dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
+
+dialog h2 { margin: 0; font-size: 1.25rem; }
+dialog hr { width: 100%; border: none; border-top: 1px solid var(--outline); margin: 0; }
+
+.dialog-body { display: flex; flex-direction: column; gap: 16px; }
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field input { padding: 8px; font-size: 1rem; }
+
+/* --- Paleta barev --- */
+
+.color-picker {
+  display: grid;
+  grid-template-columns: repeat(6, 40px);
+  gap: 8px;
+  justify-content: space-evenly;
+}
+
+.swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--outline);
+  padding: 0;
+}
+
+.swatch.is-selected { border: 2px solid var(--on-background); }
+
+/* --- Editor skóre --- */
+
+.score-editor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score-editor span { flex: 1; }
+.score-editor button { width: 48px; height: 48px; padding: 0; }
+
+.score-editor input {
+  width: 80px;
+  text-align: center;
+  padding: 8px;
+  font-size: 1rem;
+}
+
+/* --- Toast (náhrada za Snackbar) --- */
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: #322F35;
+  color: #F5EFF7;
+  padding: 12px 16px;
+  border-radius: 8px;
+  max-width: 90vw;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+#toast.is-visible { opacity: 1; }
