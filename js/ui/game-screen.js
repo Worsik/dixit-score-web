@@ -1,4 +1,5 @@
 import { t } from '../i18n.js';
+import { GRID_THRESHOLD } from '../rules.js';
 import { renderPlayerCard } from './player-card.js';
 import { escapeHtml } from './html.js';
 
@@ -16,7 +17,7 @@ function renderNewGameMenu(state) {
 export function renderGameScreen(state) {
   return `
     <header class="top-bar">
-      <img src="icons/logo.png" alt="${t('app_name')}">
+      <img src="icons/logo.jpg" alt="${t('app_name')}">
       <div class="top-bar-actions">
         <div class="menu">
           <button class="button-text" data-action="new-game">${t('new_game')}</button>
@@ -25,7 +26,9 @@ export function renderGameScreen(state) {
         <button class="button-text" data-action="add-player">${t('add_player')}</button>
       </div>
     </header>
-    <ul class="player-list">${state.players.map(renderPlayerCard).join('')}</ul>
+    <ul class="player-list${state.players.length > GRID_THRESHOLD ? ' is-grid' : ''}">
+      ${state.players.map(renderPlayerCard).join('')}
+    </ul>
     <footer class="bottom-bar">
       <button class="button-primary" data-action="scoring">
         ${t('scoring_button_round', state.roundNumber)}

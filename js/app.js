@@ -6,10 +6,12 @@ import {
   openScoring, closeScoring, toggleVoter, selectAllVoters, confirmSelection,
   backToSelection, addBonusPlayer, removeBonusPlayer, incrementBonus, decrementBonus,
   confirmBonusVotes, backFromSummary, confirmScores,
-  toggleNewGameMenu, startGameWith,
+  toggleNewGameMenu, startGameWith, movePlayer,
   clearMessage,
 } from './state.js';
 import { t } from './i18n.js';
+import { GRID_THRESHOLD } from './rules.js';
+import { attachReorder } from './ui/reorderable-list.js';
 import { renderGameScreen } from './ui/game-screen.js';
 import { renderAddPlayerDialog } from './ui/add-player-dialog.js';
 import { renderEditPlayerDialog, renderConfirmDeleteDialog } from './ui/edit-player-dialog.js';
@@ -227,8 +229,43 @@ scoringDialog.addEventListener('close', () => {
   if (getState().scoringDialog.isOpen) closeScoring();
 });
 
+// --- Drag reordering ---
+
+// Attached to #app, which survives re-renders; the list inside it does not.
+// Above GRID_THRESHOLD the layout switches to a grid where dragging is off, as in the original.
+attachReorder(app, {
+  onMove: movePlayer,
+  isEnabled: () => getState().players.length <= GRID_THRESHOLD,
+});
+
+// --- PWA ---
+
+// Registration failing must never break the app - it only means no offline mode.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+/**
+ * Safari never offers to install a web app, so iOS users need telling.
+ * Shown only on iOS and only while the app runs in a browser tab.
+ */
+function showIosInstallHint() {
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = navigator.standalone === true
+    || window.matchMedia('(display-mode: standalone)').matches;
+  if (!isIos || isStandalone) return;
+
+  const hint = document.querySelector('#ios-hint');
+  hint.textContent = t('ios_install_hint');
+  hint.hidden = false;
+  hint.addEventListener('click', () => { hint.hidden = true; });
+}
+
 // --- Start ---
 
 init();
 subscribe(render);
 render();
+showIosInstallHint();

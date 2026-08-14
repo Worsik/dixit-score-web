@@ -16,7 +16,9 @@ Podrobněji v [`docs/PRD.md`](docs/PRD.md).
 
 ## Stav
 
-Rozpracováno. Aktuální stav a další krok najdeš v [`docs/CURRENT.md`](docs/CURRENT.md).
+Funkčně hotová — správa hráčů, bodování podle pravidel Dixitu, přeskupení tažením,
+offline běh a instalace na plochu. Zbývá nasadit na veřejnou adresu a vyzkoušet
+na skutečných telefonech. Podrobnosti v [`docs/CURRENT.md`](docs/CURRENT.md).
 
 ## Spuštění lokálně
 
@@ -54,10 +56,15 @@ css/      styly
 js/       aplikace (ES moduly, bez buildu)
   rules.js    herní pravidla — čisté funkce
   state.js    stav a akce
-  ui/         obrazovka a dialogy
+  ui/         obrazovka, dialogy, tažení
+icons/    ikony a logo (132 kB celkem)
 test/     testy pro node --test
 docs/     dokumentace projektu
 ```
+
+> **Při vývoji:** service worker si agresivně cachuje. Zapni v DevTools →
+> Application → Service Workers volbu **Update on reload**, jinak budeš ladit starou
+> verzi. Při nasazení je potřeba zvýšit `CACHE_VERSION` v `sw.js`.
 
 ## Dokumentace
 
