@@ -4,6 +4,7 @@ import {
   MAX_PLAYERS,
 } from './rules.js';
 import { save, load } from './storage.js';
+import { remember, loadKnown, saveKnown } from './known-players.js';
 import { DEFAULT_COLOR } from './palette.js';
 
 const EMPTY_SCORING = {
@@ -20,6 +21,7 @@ const EMPTY_SCORING = {
 let state = {
   players: [],
   roundNumber: 1,
+  knownPlayers: [],         // names offered in the add dialog, most recent first
   addDialog: { isOpen: false, selectedColor: DEFAULT_COLOR },
   editDialog: { isOpen: false, playerId: null, selectedColor: DEFAULT_COLOR, confirmDelete: false },
   scoringDialog: { ...EMPTY_SCORING },
@@ -43,12 +45,14 @@ function update(patch) {
   listeners.forEach((listener) => listener());
 }
 
-/** Restores a stored game, if there is one. */
+/** Restores a stored game, if there is one, plus the remembered names. */
 export function init() {
   const stored = load();
   if (stored) {
     state = { ...state, players: stored.players, roundNumber: stored.roundNumber };
   }
+  // Kept under its own storage key, so a change here can never damage a saved game.
+  state = { ...state, knownPlayers: loadKnown() };
 }
 
 // --- Add player ---
@@ -78,8 +82,14 @@ export function confirmAddPlayer(name) {
     isNextStoryteller: false,
     turnOrder: state.players.length,
   };
+  // Remembered on adding, not on renaming - a rename would also record every typo
+  // made on the way to the final name.
+  const knownPlayers = remember(state.knownPlayers, newPlayer);
+  saveKnown(knownPlayers);
+
   update({
     players: addPlayer(state.players, newPlayer),
+    knownPlayers,
     addDialog: { ...state.addDialog, isOpen: false },
   });
 }

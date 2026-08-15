@@ -36,6 +36,7 @@ se vědomě. Každý rozdíl proti předloze patří sem — jinak neexistuje.
 | 2 | doplněná funkce | Bez persistence — po zabití procesu je hra pryč | Hra se ukládá a obnovuje | Na webu je zahození stránky na pozadí mnohem častější než u APK; bez toho by web byl u stolu prakticky horší |
 | 3 | vylepšení UX | Vybraný příjemce bonusu začíná na **0** bodech a musí se mu přidat tlačítkem **+** | Začíná rovnou na **1**; dlaždice kandidátů jsou zablokované, když nezbývají body | Jeden bod je běžný případ, takže klepnutí na **+** bylo zbytečné tření. Vyžádáno po zkoušce na telefonu. |
 | 4 | doplněná funkce | Nad 6 hráčů **nelze pořadí měnit vůbec** — `GameScreen.kt` má u mřížky komentář *„Dragging not supported in grid view"* | Tažení funguje i v mřížce | Předloha to nezvážila a nezavrhla, jen nedopsala: její `ReorderableLazyColumn` uměl jen `LazyColumn`. Zamčené pořadí u 7–12 hráčů je díra ve funkci, kterou aplikace jinak má. |
+| 5 | doplněná funkce | Jméno hráče se pokaždé vypisuje ručně | Dialog přidání nabízí naposledy hrané hráče jako dlaždice; klepnutí předvyplní jméno **i barvu** | U stálé party se pokaždé psala stejná jména. Vyžádáno. Dlaždice se řadí od naposledy použitého, ne podle četnosti — kdo hrál padesátkrát loni, jinak přebije toho, s kým se hraje teď. |
 
 **Pravidlo:** předloha je výchozí bod, ne strop. Vylepšení jsou vítaná, ale musí být
 **vyžádaná nebo odsouhlasená** a zapsaná do této tabulky. Co se jeví jako chyba předlohy,

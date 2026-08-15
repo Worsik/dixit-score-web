@@ -68,7 +68,7 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
       včetně blokace potvrzení, návrat ze souhrnu zachová bonusy, zrušení nic nezapíše,
       nová hra vynuluje skóre a nastaví vypravěče, okrajové stavy (0 hráčů, 1 hráč)
 
-**Testy: 39, všechny zelené.**
+**Testy: 57, všechny zelené.**
 
 ### Etapa 3
 
@@ -98,6 +98,11 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 - [x] `tools/dev-server.py` neutralizuje service worker, aby dev neladil starou verzi
 - [x] **Tažení funguje i v mřížce nad 6 hráčů** (vylepšení #4) — předloha to neuměla,
       takže u 7–12 hráčů bylo pořadí zamčené. `insertionTarget()` rozhoduje ve dvou osách.
+- [x] **Nabídka naposledy hraných hráčů v dialogu přidání** (vylepšení #5) — nový modul
+      `js/known-players.js` s vlastním klíčem v úložišti (AD-12), 12 testů. Řadí se od
+      naposledy použitého, strop 20 jmen, nabízí se nejvýš 8. Klepnutí předvyplní jméno
+      i barvu. Vedlejší nález: `showModal()` začal zaostřovat první dlaždici — nadpis
+      teď přebírá zaostření i v dialogu přidání (**parita**, předloha nezaostřuje nikde).
 - [x] **Bonusový bod se přiděluje rovnou při výběru hráče** (vylepšení #3) — dlaždice
       kandidátů jsou zablokované, když nezbývají body. Výpočet zbývajících bodů
       vytažen do `remainingBonusPoints()` v `rules.js`, kde byl třikrát zduplikovaný.
@@ -112,6 +117,7 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 ### Co nelze ověřit v prohlížeči na počítači
 
 - Zda tažení prstem nekoliduje se scrollováním (AD-9)
+- Zda se dlaždice naposledy hraných vejdou nad klávesnici a dají se trefit prstem
 - Zda podržení na iOS nevyvolá kontextové menu
 - Zda instalace na plochu proběhne a aplikace se spustí bez adresního řádku
 - Zda iOS neodstřelí uložená data
@@ -123,6 +129,9 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 ## Otevřené otázky
 
 Žádné. *(GitHub issues se zatím nezakládají — jede se podle plánů v `docs/plans/`.)*
+
+Nápady na další rozvoj, o kterých zatím nepadlo rozhodnutí, jsou
+v [`BACKLOG.md`](BACKLOG.md).
 
 ## Log změn
 
@@ -137,3 +146,5 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 | 2026-08-15 | Bonusový bod se přiděluje rovnou při výběru hráče (vylepšení #3 oproti předloze) |
 | 2026-08-15 | Ladění na telefonu: zaostření v dialogu úpravy, layout app shell, vypnuté tažení k obnovení |
 | 2026-08-15 | Tažení doplněno i do dvousloupcové mřížky (vylepšení #4) |
+| 2026-08-15 | Založen `BACKLOG.md` — nápady na rozvoj (statistika, hlášení chyb) bez rozhodnutí |
+| 2026-08-15 | Nabídka naposledy hraných hráčů v dialogu přidání (vylepšení #5, AD-12) |

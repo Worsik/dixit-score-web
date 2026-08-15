@@ -103,8 +103,15 @@ Compose se takhle nechová, takže je to rozdíl vnesený platformou, ne návrhe
 `autofocus` na jiném prvku — v dialogu úpravy hráče ho nese nadpis
 (`<h2 tabindex="-1" autofocus>`), který navíc odečtou čtečky.
 
-**Každý nový dialog s textovým polem musí tohle vyřešit vědomě:** buď pole zaostřit chce
-(dialog přidání hráče), nebo ne (dialog úpravy).
+**Každý nový dialog s textovým polem musí tohle vyřešit vědomě.** Dnes nadpis přebírá
+zaostření v **obou** dialozích — u úpravy i u přidání.
+
+U dialogu přidání to původně řešené nebylo a klávesnice vyskakovala. Ukázalo se to až
+při doplnění dlaždic s naposledy hranými hráči: dlaždice jsou nad polem jména, takže
+`showModal()` začal zaostřovat **první dlaždici** a ta vypadala jako vybraná. Kontrola
+předlohy ukázala, že Compose nezaostřuje ani tady (`FocusRequester` se v celém projektu
+`dixit-score` nevyskytuje), takže nadpis s `autofocus` je **návrat k paritě**, ne
+vylepšení — proto to není v tabulce vylepšení v `SPEC.md`.
 
 ### AD-5: Nulové běhové závislosti
 
@@ -226,6 +233,27 @@ zatímco `Scaffold` v předloze ji drží na místě.
     '<style>.top-bar{padding-top:47px!important}.bottom-bar{padding-bottom:46px!important}</style>');
   ```
 
+### AD-12: Naposledy hraní hráči mají vlastní klíč v úložišti
+
+**Rozhodnutí:** Zapamatovaná jména se ukládají pod `dixit-known-players`, odděleně od
+rozehrané hry (`dixit-score`). Vlastní modul `js/known-players.js` si drží logiku i obsluhu
+úložiště.
+
+**Důvod:** `storage.js` zahazuje celý uložený stav, když nesedí `VERSION`
+(`deserialize()` vrátí `null`). Kdyby se seznam jmen přidal do stejného záznamu, muselo by
+se zvýšit `VERSION` — a **komukoli s aplikací na ploše by to smazalo rozehranou hru**.
+Vlastní klíč tuhle past obchází úplně: formát hry se nemění, takže není co migrovat.
+
+**Důsledky:**
+- Poškozený seznam jmen se opravuje **po položkách**, ne zahozením celku
+  (`parseKnown()` odfiltruje vadné záznamy). U hry dává smysl opak — půlka hry je horší
+  než žádná —, u pomůcky pro pohodlí ne.
+- Seznam nemá pole verze. Kdyby se formát někdy měnil, filtr vadných položek to zvládne
+  bez migrace.
+- Strop 20 jmen nahrazuje UI pro mazání: starší jména vypadnou sama, a kdo se objeví
+  znovu, vrátí se taky sám. Kdyby mazání jednotlivých jmen bylo potřeba, je to nová
+  funkce, ne dořešení téhle.
+
 ---
 
 ## 2. Struktura projektu
@@ -240,7 +268,8 @@ css/styles.css                barevné schéma, layout, safe-area
 js/app.js                     bootstrap: načtení stavu, navěšení handlerů, první render
 js/state.js                   ≙ GameViewModel.kt   — stav a akce
 js/rules.js                   ≙ bodovací logika    — čisté funkce, bez DOM
-js/storage.js                 serializace + localStorage
+js/storage.js                 serializace + localStorage (rozehraná hra)
+js/known-players.js           naposledy hraní hráči — vlastní klíč v úložišti (AD-12)
 js/i18n.js                    ≙ values/strings.xml, values-cs/strings.xml
 js/ui/game-screen.js          ≙ GameScreen.kt
 js/ui/player-card.js          ≙ PlayerRow

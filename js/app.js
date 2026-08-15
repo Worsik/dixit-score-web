@@ -105,6 +105,14 @@ addDialog.addEventListener('input', () =>
   refreshConfirmState(addDialog, 'add-name', 'add-confirm'));
 
 addDialog.addEventListener('click', (event) => {
+  // A recent-name tile fills the uncontrolled input directly; setAddColor then
+  // re-renders, and syncDialog carries the value we just wrote across the render.
+  const known = event.target.closest('[data-known-name]');
+  if (known) {
+    addDialog.querySelector('#add-name').value = known.dataset.knownName;
+    return setAddColor(known.dataset.knownColor);
+  }
+
   const { action, color } = event.target.dataset;
   if (color) setAddColor(color);
   if (action === 'add-cancel') closeAddDialog();
