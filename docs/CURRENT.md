@@ -96,6 +96,8 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
       Safe-area odsazení na `body` se sčítalo s `100dvh` na `#app`, takže spodní lišta
       končila pod okrajem obrazovky. Tažení dolů už stránku neobnoví.
 - [x] `tools/dev-server.py` neutralizuje service worker, aby dev neladil starou verzi
+- [x] **Tažení funguje i v mřížce nad 6 hráčů** (vylepšení #4) — předloha to neuměla,
+      takže u 7–12 hráčů bylo pořadí zamčené. `insertionTarget()` rozhoduje ve dvou osách.
 - [x] **Bonusový bod se přiděluje rovnou při výběru hráče** (vylepšení #3) — dlaždice
       kandidátů jsou zablokované, když nezbývají body. Výpočet zbývajících bodů
       vytažen do `remainingBonusPoints()` v `rules.js`, kde byl třikrát zduplikovaný.
@@ -134,3 +136,4 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 | 2026-08-15 | Nasazeno na GitHub Pages; nahlášena a opravena chyba: dialogy ukazovaly údaje předchozího hráče |
 | 2026-08-15 | Bonusový bod se přiděluje rovnou při výběru hráče (vylepšení #3 oproti předloze) |
 | 2026-08-15 | Ladění na telefonu: zaostření v dialogu úpravy, layout app shell, vypnuté tažení k obnovení |
+| 2026-08-15 | Tažení doplněno i do dvousloupcové mřížky (vylepšení #4) |
