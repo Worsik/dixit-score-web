@@ -6,6 +6,10 @@ telefonu a funguje offline — **bez Google Play a bez App Store**.
 Je to webový přepis [nativní Android aplikace `dixit-score`](https://github.com/Worsik/dixit-score)
 (Kotlin + Jetpack Compose) se **shodným chováním**.
 
+### 👉 https://worsik.github.io/dixit-score-web/
+
+Otevři na telefonu a přidej na plochu — návod níže.
+
 ## Proč to existuje
 
 Vznikl spor, jestli je pro mobilní aplikaci nutná nativní implementace, nebo jestli stačí
@@ -26,12 +30,15 @@ Aplikace nemá build krok ani závislosti. Potřebuje jen HTTP server — z `fil
 nepoběží, protože ES moduly a service worker to nedovolí.
 
 ```bash
-python -m http.server 8000
-# nebo: npx serve
+python tools/dev-server.py 8000
 ```
 
 Pak otevřít `http://localhost:8000`. `localhost` je výjimka z požadavku na HTTPS,
 takže service worker se zaregistruje i bez certifikátu.
+
+> **Nepoužívej `python -m http.server`.** Neposílá `Cache-Control`, takže prohlížeč
+> po úpravě souboru servíruje starou verzi a ladíš přelud. `tools/dev-server.py` je
+> totéž, ale s `no-store`.
 
 ## Testy
 

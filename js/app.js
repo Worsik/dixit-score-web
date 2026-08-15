@@ -16,6 +16,7 @@ import { renderGameScreen } from './ui/game-screen.js';
 import { renderAddPlayerDialog } from './ui/add-player-dialog.js';
 import { renderEditPlayerDialog, renderConfirmDeleteDialog } from './ui/edit-player-dialog.js';
 import { renderScoringDialog } from './ui/scoring-dialog.js';
+import { syncDialog } from './ui/dialog.js';
 
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
@@ -25,26 +26,6 @@ const confirmDeleteDialog = document.querySelector('#confirm-delete-dialog');
 const scoringDialog = document.querySelector('#scoring-dialog');
 
 // --- Rendering ---
-
-/**
- * Re-renders a dialog while keeping uncontrolled text inputs intact.
- * Without this, picking a colour would wipe a half-typed name.
- */
-function syncDialog(dialog, isOpen, renderContent, inputIds = []) {
-  if (!isOpen) {
-    if (dialog.open) dialog.close();
-    return;
-  }
-
-  const saved = inputIds.map((id) => dialog.querySelector(`#${id}`)?.value);
-  dialog.innerHTML = renderContent();
-  inputIds.forEach((id, index) => {
-    const input = dialog.querySelector(`#${id}`);
-    if (input && saved[index] !== undefined) input.value = saved[index];
-  });
-
-  if (!dialog.open) dialog.showModal();
-}
 
 /** Confirm buttons stay disabled while the name is empty. */
 function refreshConfirmState(dialog, nameId, action) {
