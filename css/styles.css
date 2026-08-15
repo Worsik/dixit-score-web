@@ -143,6 +143,8 @@ dialog {
 dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
 
 dialog h2 { margin: 0; font-size: 1.25rem; }
+/* Nadpis přebírá počáteční zaostření, ať se neotevře klávesnice - obrys by mátl. */
+dialog h2:focus { outline: none; }
 dialog hr { width: 100%; border: none; border-top: 1px solid var(--outline); margin: 0; }
 
 .dialog-body { display: flex; flex-direction: column; gap: 16px; }

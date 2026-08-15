@@ -84,6 +84,15 @@ implementace ukáže jako problém, je to první kandidát na výjimku.
 
 **Důsledky:** Vyžaduje Safari 15.4+ (2022) a Chrome 37+. Pokrývá cílová zařízení.
 
+**Pozor na počáteční zaostření.** `showModal()` sám zaostří první zaostřitelný prvek
+v dialogu. Když je jím textové pole, na telefonu vyskočí klávesnice a zakryje půl dialogu.
+Compose se takhle nechová, takže je to rozdíl vnesený platformou, ne návrhem. Řeší se
+`autofocus` na jiném prvku — v dialogu úpravy hráče ho nese nadpis
+(`<h2 tabindex="-1" autofocus>`), který navíc odečtou čtečky.
+
+**Každý nový dialog s textovým polem musí tohle vyřešit vědomě:** buď pole zaostřit chce
+(dialog přidání hráče), nebo ne (dialog úpravy).
+
 ### AD-5: Nulové běhové závislosti
 
 **Rozhodnutí:** Aplikace nemá žádnou externí knihovnu. Testy běží na vestavěném

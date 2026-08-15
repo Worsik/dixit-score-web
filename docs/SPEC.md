@@ -176,6 +176,11 @@ zařadí na konec pořadí. Tlačítko **Zrušit**.
 
 Pole pro jméno, paleta, oddělovač, řádek pro skóre: **−**, číselné pole, **+**.
 
+**Pole jména se při otevření nezaostřuje** — jinak by na telefonu vyskočila klávesnice
+a zakryla paletu i editor skóre. Klepnutím do pole se přejmenovává normálně. Odpovídá
+předloze, která pole také nezaostřuje; na webu si to vyžádalo explicitní zásah, protože
+`<dialog>` zaostřuje sám (viz AD-4 v [`DEV.md`](DEV.md)).
+
 - **+ / −** změní hodnotu o 1; nečitelná hodnota se čte jako 0
 - Při uložení se nečitelná hodnota skóre **ignoruje** a zůstane původní
 - **Uložit** je neaktivní při prázdném jméně
