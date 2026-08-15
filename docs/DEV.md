@@ -188,6 +188,31 @@ vlastnost DOM, ne HTML atribut — z markupu ji nastavit nelze. Stav se proto vy
 do `data-state` a `refreshTriStateCheckbox()` v `js/app.js` ho po každém překreslení
 překlopí do vlastnosti.
 
+### AD-11: Layout jako app shell
+
+*(Rozhodnuto při ladění na telefonu.)*
+
+**Rozhodnutí:** Stránka se nescrolluje (`body { height: 100dvh; overflow: hidden }`),
+scrolluje se jen seznam hráčů. Odsazení pro čelo a gesto lištu nese **každá lišta sama**,
+ne `body`. Tažení dolů je vypnuté přes `overscroll-behavior-y: contain`.
+
+**Důvod:** Původně mělo `body` odsazení pro safe-area a `#app` k tomu `min-height: 100dvh`.
+Ty dvě výšky se **sečetly** — s vsazením 47 + 34 px byl dokument o 80 px vyšší než okno
+a spodní lišta s tlačítkem bodování skončila pod viditelnou plochou. Na počítači se to
+neprojeví, protože tam jsou vsazení nulová. Zároveň s víc hráči lišta odscrollovala pryč,
+zatímco `Scaffold` v předloze ji drží na místě.
+
+**Důsledky:**
+- Seznam musí mít `min-height: 0`. Položka flexboxu má implicitní `min-height: auto`,
+  takže by se nesmrskla pod výšku obsahu a lištu by zase vytlačila. Bez tohohle řádku
+  oprava nefunguje a projeví se to až u většího počtu hráčů.
+- Nové odsazení od okrajů obrazovky patří do lišt, ne do `body`.
+- Ověřovat je nutné se **simulovaným vsazením** — na počítači je chyba neviditelná:
+  ```js
+  document.head.insertAdjacentHTML('beforeend',
+    '<style>.top-bar{padding-top:47px!important}.bottom-bar{padding-bottom:46px!important}</style>');
+  ```
+
 ---
 
 ## 2. Struktura projektu
@@ -271,6 +296,9 @@ servírovat starou verzi hned ze **dvou** důvodů:
    který posílá `no-store`. **Nepoužívej `python -m http.server`.**
 2. **Service worker.** Cachuje nezávisle na HTTP cache. V DevTools → Application →
    Service Workers zapni **Update on reload**.
+
+`tools/dev-server.py` proto ve výchozím stavu **podstrčí místo `sw.js` worker, který se
+sám odregistruje a smaže cache**. Offline režim se testuje přepínačem `--sw`.
 
 **Jak poznat, že na to jsi narazil:** v konzoli spusť
 

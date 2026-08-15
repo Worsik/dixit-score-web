@@ -149,6 +149,10 @@ Klepnutí otevře dialog úpravy.
 **Dolní lišta:** vystředěné tlačítko s ikonou hvězdy a textem `scoring_button_round` —
 cs „Hodnocení pro *N*. kolo", en „Scoring for round *N*".
 
+**Obě lišty jsou pevné a vždy viditelné**, scrolluje se jen seznam hráčů — odpovídá
+`Scaffold` v předloze. Stránka jako celek se nescrolluje a **tažení dolů ji neobnoví**;
+nativní aplikace se taky sama od sebe nerestartuje. Viz AD-11 v [`DEV.md`](DEV.md).
+
 > **Texty se opisují doslova** z `values/strings.xml` a `values-cs/strings.xml`.
 > Citace v této kapitole jsou informativní; závazný je obsah zdrojových souborů.
 
