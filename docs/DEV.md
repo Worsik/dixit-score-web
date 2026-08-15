@@ -72,6 +72,19 @@ user-select: none;
 > **Revidováno v AD-9.** Původně zde bylo `touch-action: none`; při implementaci se
 > ukázalo, že by to znemožnilo scrollování seznamu prstem.
 
+**Funguje v obou rozvrženích** — ve svislém seznamu i v dvousloupcové mřížce
+(vylepšení #4 ve [`SPEC.md`](SPEC.md)). O cílové pozici rozhoduje `insertionTarget()`:
+najde první sourozeneckou kartu, která leží **za ukazatelem v pořadí čtení**, a vloží
+taženou kartu před ni.
+
+- **Svislý seznam** porovnává jen vodorovnou osu (`y < střed karty`) a taženou kartou
+  nehýbe do stran — stejně jako předloha.
+- **Mřížka** nejdřív vyřadí celé řádky nad a pod ukazatelem, teprve pak rozhodne podle
+  vodorovné poloviny karty.
+
+Po každém přesunu v DOM se dopočítá `startX`/`startY` z rozdílu `offsetLeft`/`offsetTop`,
+aby karta zůstala pod prstem a nepoškočila.
+
 **Zvažovaná alternativa:** SortableJS (vanilla, osvědčená, řeší auto-scroll i animace).
 Zamítnuto kvůli AD-5 — nemáme jedinou závislost a tahle by byla první. Pokud se ruční
 implementace ukáže jako problém, je to první kandidát na výjimku.

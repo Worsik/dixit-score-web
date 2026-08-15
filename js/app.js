@@ -10,7 +10,6 @@ import {
   clearMessage,
 } from './state.js';
 import { t } from './i18n.js';
-import { GRID_THRESHOLD } from './rules.js';
 import { attachReorder } from './ui/reorderable-list.js';
 import { renderGameScreen } from './ui/game-screen.js';
 import { renderAddPlayerDialog } from './ui/add-player-dialog.js';
@@ -213,11 +212,8 @@ scoringDialog.addEventListener('close', () => {
 // --- Drag reordering ---
 
 // Attached to #app, which survives re-renders; the list inside it does not.
-// Above GRID_THRESHOLD the layout switches to a grid where dragging is off, as in the original.
-attachReorder(app, {
-  onMove: movePlayer,
-  isEnabled: () => getState().players.length <= GRID_THRESHOLD,
-});
+// Works in both layouts - the column and the two-column grid.
+attachReorder(app, { onMove: movePlayer });
 
 // --- PWA ---
 

@@ -35,6 +35,7 @@ se vědomě. Každý rozdíl proti předloze patří sem — jinak neexistuje.
 | 1 | oprava chyby | Hláška při 13. hráči zobrazí číselné ID resource (chyba v `GameViewModel.kt:245`) | Zobrazí text hlášky | Replikovat chybu nemá hodnotu ani pro srovnání |
 | 2 | doplněná funkce | Bez persistence — po zabití procesu je hra pryč | Hra se ukládá a obnovuje | Na webu je zahození stránky na pozadí mnohem častější než u APK; bez toho by web byl u stolu prakticky horší |
 | 3 | vylepšení UX | Vybraný příjemce bonusu začíná na **0** bodech a musí se mu přidat tlačítkem **+** | Začíná rovnou na **1**; dlaždice kandidátů jsou zablokované, když nezbývají body | Jeden bod je běžný případ, takže klepnutí na **+** bylo zbytečné tření. Vyžádáno po zkoušce na telefonu. |
+| 4 | doplněná funkce | Nad 6 hráčů **nelze pořadí měnit vůbec** — `GameScreen.kt` má u mřížky komentář *„Dragging not supported in grid view"* | Tažení funguje i v mřížce | Předloha to nezvážila a nezavrhla, jen nedopsala: její `ReorderableLazyColumn` uměl jen `LazyColumn`. Zamčené pořadí u 7–12 hráčů je díra ve funkci, kterou aplikace jinak má. |
 
 **Pravidlo:** předloha je výchozí bod, ne strop. Vylepšení jsou vítaná, ale musí být
 **vyžádaná nebo odsouhlasená** a zapsaná do této tabulky. Co se jeví jako chyba předlohy,
@@ -139,8 +140,13 @@ a **Přidat hráče** (ikona +).
 
 **Seznam hráčů:**
 
-- **≤ 6 hráčů** → svislý seznam s přeskupením tažením
-- **> 6 hráčů** → mřížka o **2 sloupcích, bez tažení**
+- **≤ 6 hráčů** → svislý seznam
+- **> 6 hráčů** → mřížka o **2 sloupcích**
+
+**Přeskupení tažením funguje v obou rozvrženích** (vylepšení #4). Gesto začíná podržením
+prstu na kartě (500 ms); kratší klepnutí otevře úpravu hráče. O zařazení rozhoduje
+**polovina cílové karty** — puštění na levé polovině zařadí před ni, na pravé za ni;
+ve svislém seznamu platí totéž pro horní a dolní polovinu.
 
 **Karta hráče:** pozadí = barva hráče na **20 % krytí**, obrys 1 px. Vlevo jméno, pod ním
 případně „Vypravěč" / „Další vypravěč" drobným písmem. Vpravo skóre velkým písmem.
@@ -318,6 +324,6 @@ Service worker: cache-first pro app shell (HTML, CSS, JS, ikony), verzovaný ná
 
 - [ ] Aplikace jde přidat na plochu a spustí se ve vlastním okně bez adresního řádku
 - [ ] Po vypnutí sítě se spustí a je plně funkční
-- [ ] Tažením prstem lze přeskupit hráče (≤ 6 hráčů); nad 6 hráčů se zobrazí mřížka
+- [ ] Tažením prstem lze přeskupit hráče ve svislém seznamu i v mřížce nad 6 hráčů
 - [ ] Celé kolo bodování dá stejný výsledek jako APK verze
 - [ ] Po zavření a znovuotevření je rozehraná hra na místě
