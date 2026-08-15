@@ -133,7 +133,14 @@ stavu, tedy překreslení — smazal rozepsané jméno hráče. Alternativa (dr�
 by při každém stisku klávesy překreslovala dialog a shazovala kurzor.
 
 **Důsledky:** Každý nový dialog s textovým polem musí předat jeho `id` do `syncDialog`.
-Ověřeno testem v prohlížeči: napsat jméno → vybrat barvu → jméno zůstává.
+
+**Zachování hodnot platí jen po dobu, kdy dialog zůstává otevřený.** Zavřený `<dialog>`
+si v DOM ponechá obsah předchozího otevření, takže při novém otevření jsou závazné
+**čerstvě vykreslené** hodnoty ze stavu. Původní implementace tuhle podmínku neměla
+a dialog úpravy pak ukazoval jméno i skóre předchozího hráče (a dialog přidání jméno
+naposledy přidaného). Opraveno podmínkou `wasOpen`; chování hlídají testy
+v `test/dialog.test.js`. Kvůli testovatelnosti žije `syncDialog` v `js/ui/dialog.js`,
+ne v `js/app.js`.
 
 ### AD-9: Tažení versus scrollování
 
@@ -240,14 +247,38 @@ Aplikace nemá build krok. Potřebuje jen HTTP server — z `file://` nepoběž�
 u ES modulů a service worker se odtamtud nezaregistruje vůbec.
 
 ```bash
-python -m http.server 8000
+python tools/dev-server.py 8000
 ```
 
 `localhost` je výjimka z požadavku na HTTPS, takže service worker funguje i bez certifikátu.
 
-**Pozor při vývoji:** service worker si agresivně cachuje. V DevTools →
-Application → Service Workers zapnout **Update on reload**, jinak budeš ladit starou verzi
-a divit se.
+### Dvě nezávislé vrstvy zvětralého kódu
+
+Tohle už třikrát stálo hodiny ladění přeludu. Po úpravě souboru může prohlížeč
+servírovat starou verzi hned ze **dvou** důvodů:
+
+1. **HTTP cache prohlížeče.** `python -m http.server` neposílá `Cache-Control`, takže
+   prohlížeč JS moduly cachuje heuristicky. Proto existuje `tools/dev-server.py`,
+   který posílá `no-store`. **Nepoužívej `python -m http.server`.**
+2. **Service worker.** Cachuje nezávisle na HTTP cache. V DevTools → Application →
+   Service Workers zapni **Update on reload**.
+
+**Jak poznat, že na to jsi narazil:** v konzoli spusť
+
+```js
+performance.getEntriesByType('resource').filter(e => e.name.includes('/js/'))
+```
+
+a porovnej seznam s tím, co aplikace opravdu importuje. Chybějící modul znamená,
+že běží stará verze. Nouzový úklid:
+
+```js
+(await navigator.serviceWorker.getRegistrations()).forEach(r => r.unregister());
+(await caches.keys()).forEach(n => caches.delete(n));
+```
+
+Nejrychlejší obchvat obojího při ověřování: **spustit server na jiném portu** —
+jiný původ má vlastní HTTP cache i vlastní registraci service workeru.
 
 ---
 

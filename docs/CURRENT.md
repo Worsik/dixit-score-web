@@ -13,21 +13,24 @@
 běží offline a je instalovatelná na plochu. Ověřeno v prohlížeči včetně skutečného
 offline testu se zabitým serverem.
 
-**Zbývá jediné: nasadit ji a vyzkoušet na skutečných telefonech.** To je zároveň to,
-kvůli čemu projekt vznikl — dokud neproběhne test na iPhonu, otázka „obstojí PWA místo
-nativní aplikace?" zůstává nezodpovězená.
+**Nasazená na https://worsik.github.io/dixit-score-web/** — ověřeno, že jde spustit,
+uložit na plochu a že drží data.
+
+**Zbývá vyzkoušet na iPhonu.** To je zároveň to, kvůli čemu projekt vznikl — dokud
+test na iOS neproběhne, otázka „obstojí PWA místo nativní aplikace?" zůstává
+nezodpovězená.
 
 | Etapa | Obsah | Stav |
 |-------|-------|------|
 | 1 | Jádro (pravidla, persistence, texty, stav) a správa hráčů | **hotovo** |
 | 2 | Bodovací dialog o třech krocích, nová hra | **hotovo** |
 | 3 | Přeskupení tažením, mřížka nad 6 hráčů, PWA vrstva | **hotovo** (kód) |
-| 3 | Nasazení na GitHub Pages a akceptace na zařízeních | **zbývá** |
+| 3 | Nasazení na GitHub Pages | **hotovo** |
+| — | Akceptace na iPhonu | **zbývá** |
 
 ## Další krok
 
-**Zapnout GitHub Pages** — vyžaduje souhlas člověka, je to zveřejnění na veřejné adrese.
-Pak ruční akceptace na Androidu a iPhonu.
+Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení prstem.
 
 ## Hotovo
 
@@ -79,11 +82,19 @@ Pak ruční akceptace na Androidu a iPhonu.
       krátké klepnutí pořád otevírá úpravu, mřížka se přepíná na 7. hráči,
       **aplikace naběhne a odehraje celé kolo se zabitým serverem**
 
+### Opravy po nasazení
+
+- [x] **Dialogy ukazovaly údaje předchozího hráče** — `syncDialog` obnovoval hodnoty
+      textových polí i při novém otevření, kde je závazný čerstvý render ze stavu.
+      Postiženo jméno i skóre v úpravě a jméno v přidání. Vytaženo do `js/ui/dialog.js`
+      a pokryto 4 testy v `test/dialog.test.js`.
+- [x] `tools/dev-server.py` — statický server s `no-store`; `python -m http.server`
+      cachoval JS a dvakrát způsobil ladění staré verze kódu
+
 ## Zbývá
 
-- [ ] Zapnout GitHub Pages *(čeká na souhlas — zveřejnění na veřejné adrese)*
-- [ ] Doplnit adresu do `README.md`
-- [ ] **Ruční akceptace na skutečném Androidu** — instalace na plochu, offline, tažení prstem
+- [x] Nasazení na GitHub Pages — https://worsik.github.io/dixit-score-web/
+- [x] Ruční ověření na Androidu — spuštění, instalace na plochu, persistence
 - [ ] **Ruční akceptace na skutečném iPhonu** — Safari „Přidat na plochu", offline,
       tažení prstem, safe-area kolem čela
 
@@ -111,3 +122,4 @@ Pak ruční akceptace na Androidu a iPhonu.
 | 2026-08-15 | Implementována a ověřena etapa 1 — jádro a správa hráčů |
 | 2026-08-15 | Implementována a ověřena etapa 2 — bodování a nová hra |
 | 2026-08-15 | Implementována etapa 3 — tažení, mřížka, PWA vrstva; ikony zmenšeny z 2 MB na 132 kB; ověřen offline běh |
+| 2026-08-15 | Nasazeno na GitHub Pages; nahlášena a opravena chyba: dialogy ukazovaly údaje předchozího hráče |
