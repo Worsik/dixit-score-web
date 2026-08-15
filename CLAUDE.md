@@ -11,7 +11,8 @@ pravidlo — s výjimkou technických konvencí níže, které jsou pro tenhle p
 ## 1. Co to je
 
 Webový přepis nativní Android aplikace [`dixit-score`](https://github.com/Worsik/dixit-score)
-do podoby PWA. Cílem je **funkční parita 1:1** s předlohou.
+do podoby PWA. Přepis dosáhl **funkční parity** s předlohou; od nasazení se aplikace
+vyvíjí dál (viz kap. 5).
 
 ---
 
@@ -53,11 +54,19 @@ Postup: red (test selže) → green (minimální implementace) → refactor. Oba
 UI a dotyková gesta se testují ručně na zařízení — automatizovat je se u aplikace téhle
 velikosti nevyplatí.
 
-## 5. Pravidlo 1:1
+## 5. Vztah k předloze
 
-Chování musí odpovídat Android předloze. Když při implementaci narazíš na něco, co vypadá
-jako chyba předlohy, **replikuj to** a nerozhoduj za pochodu. Jakákoli vědomá odchylka
-musí být zapsaná v tabulce odchylek v [`docs/SPEC.md`](docs/SPEC.md) — jinak neexistuje.
+Přepis dosáhl funkční parity s APK a aplikace se od té doby **vyvíjí dál**. Předloha je
+tedy výchozí bod, ne strop.
+
+- **Neměň chování z vlastní iniciativy.** Vylepšení musí být vyžádané nebo odsouhlasené.
+- Když narazíš na něco, co vypadá jako chyba předlohy, **ani to tiše nereplikuj, ani tiše
+  neopravuj** — pojmenuj to nahlas a nech rozhodnout.
+- Každý rozdíl proti předloze patří do tabulky vylepšení v
+  [`docs/SPEC.md`](docs/SPEC.md) — jinak neexistuje.
+
+Ta tabulka není byrokracie: projekt má doložit, že web umí **všechno co APK**, a bez
+evidence by za rok nešlo rozlišit paritu od nadstavby.
 
 ## 6. Styl kódu
 
