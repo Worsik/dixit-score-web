@@ -5,7 +5,8 @@ Architektura a zdůvodnění rozhodnutí jsou v [`DEV.md`](DEV.md), produktový 
 v [`PRD.md`](PRD.md).
 
 **Předloha:** [`Worsik/dixit-score`](https://github.com/Worsik/dixit-score), commit `280bed9`
-(Kotlin + Jetpack Compose). Cílem je **funkční parita 1:1**.
+(Kotlin + Jetpack Compose). Přepis dosáhl **funkční parity**; aplikace se od nasazení
+vyvíjí dál — rozdíly proti předloze eviduje tabulka vylepšení níže.
 
 ---
 
@@ -13,7 +14,7 @@ v [`PRD.md`](PRD.md).
 
 ### V rozsahu
 
-- Funkční parita s APK verzí 1:1 — chování, texty, barvy, rozvržení
+- Funkční parita s APK verzí — chování, texty, barvy, rozvržení
 - Instalace na plochu telefonu, offline běh
 - Persistence rozehrané hry
 - Lokalizace en + cs
@@ -24,16 +25,25 @@ v [`PRD.md`](PRD.md).
 Tmavý motiv (předloha ho nemá), undo, historie kol, serverová část, účty, synchronizace
 mezi zařízeními, jazyky nad rámec en/cs, automatizované testy UI a gest.
 
-### Vědomé odchylky od předlohy
+### Vylepšení oproti předloze
 
-| # | Předloha | Web | Důvod |
-|---|----------|-----|-------|
-| 1 | Hláška při 13. hráči zobrazí číselné ID resource (chyba v `GameViewModel.kt:245`) | Zobrazí text hlášky | Replikovat chybu nemá hodnotu ani pro srovnání |
-| 2 | Bez persistence — po zabití procesu je hra pryč | Hra se ukládá a obnovuje | Na webu je zahození stránky na pozadí mnohem častější než u APK; bez toho by web byl u stolu prakticky horší |
-| 3 | Vybraný příjemce bonusu začíná na **0** bodech a musí se mu přidat tlačítkem **+** | Začíná rovnou na **1**; dlaždice kandidátů jsou zablokované, když nezbývají body | Jeden bod je běžný případ, takže klepnutí na **+** bylo zbytečné tření. Vyžádáno po zkoušce na telefonu. |
+Přepis skončil ve funkční paritě s APK. Od nasazení se aplikace **vyvíjí dál** a odchyluje
+se vědomě. Každý rozdíl proti předloze patří sem — jinak neexistuje.
 
-**Jiné odchylky nejsou přípustné.** Cokoli dalšího, co se během implementace bude jevit
-jako chyba předlohy, se **replikuje** a zapíše do této tabulky — nerozhoduje se za pochodu.
+| # | Typ | Předloha | Web | Důvod |
+|---|-----|----------|-----|-------|
+| 1 | oprava chyby | Hláška při 13. hráči zobrazí číselné ID resource (chyba v `GameViewModel.kt:245`) | Zobrazí text hlášky | Replikovat chybu nemá hodnotu ani pro srovnání |
+| 2 | doplněná funkce | Bez persistence — po zabití procesu je hra pryč | Hra se ukládá a obnovuje | Na webu je zahození stránky na pozadí mnohem častější než u APK; bez toho by web byl u stolu prakticky horší |
+| 3 | vylepšení UX | Vybraný příjemce bonusu začíná na **0** bodech a musí se mu přidat tlačítkem **+** | Začíná rovnou na **1**; dlaždice kandidátů jsou zablokované, když nezbývají body | Jeden bod je běžný případ, takže klepnutí na **+** bylo zbytečné tření. Vyžádáno po zkoušce na telefonu. |
+
+**Pravidlo:** předloha je výchozí bod, ne strop. Vylepšení jsou vítaná, ale musí být
+**vyžádaná nebo odsouhlasená** a zapsaná do této tabulky. Co se jeví jako chyba předlohy,
+se nadále **nemá tiše replikovat ani tiše opravovat** — nahlas se to pojmenuje a rozhodne.
+
+> **Proč se to eviduje takhle podrobně:** projekt má odpovědět na otázku „obstojí PWA místo
+> nativní aplikace?". Ta odpověď stojí na tom, že web umí **všechno, co APK**. Vylepšení
+> tomu neškodí, dokud je jasně vidět, co je parita a co je nadstavba. Bez téhle tabulky by
+> se za rok nedalo rozlišit, jestli je web lepší proto, že je web, nebo proto, že je novější.
 
 ---
 
@@ -125,7 +135,7 @@ a **Přidat hráče** (ikona +).
 - **Nová hra** rozbalí nabídku se seznamem všech hráčů. Výběrem hráče začne nová hra:
   skóre všech na **0**, kolo na **1**, vybraný hráč vypravěčem.
 - **Přidat hráče** při **≥ 12 hráčích** dialog **neotevře** a zobrazí hlášku
-  „Dosáhli jste maximálního počtu hráčů" (odchylka #1).
+  „Dosáhli jste maximálního počtu hráčů" (vylepšení #1).
 
 **Seznam hráčů:**
 
@@ -189,7 +199,7 @@ Uhodli-li všichni, **Potvrdit** vede rovnou na krok 3.
 
 - `scoring_bonus_votes_points_to_distribute` — cs „Zbývá rozdělit: *N* b." (odpočítává se)
 - Mřížka **3 sloupce** s kandidáty, kteří ještě nebyli vybráni; klepnutím se hráč přesune
-  do spodního seznamu a **rovnou dostane 1 bod** (odchylka #3)
+  do spodního seznamu a **rovnou dostane 1 bod** (vylepšení #3)
 - Dlaždice kandidátů jsou **zablokované, když nezbývají body** — vybrat hráče by
   znamenalo přidělit mu bod, který není z čeho vzít. Ubrání bodu je zase odemkne.
 - Spodní seznam se objeví, až je někdo vybraný: ikona koše (odebere hráče i jeho body),

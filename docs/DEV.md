@@ -115,8 +115,8 @@ Barvy a skóre escapování nepotřebují — pocházejí z pevné palety a z `N
 **Rozhodnutí:** Hlášky se zobrazují vlastním `#toast` prvkem, ne `alert()`.
 
 **Důvod:** Předloha používá Material Snackbar — nemodální proužek dole, který sám zmizí.
-`alert()` blokuje vlákno, vypadá jako systémová chyba a musí se odklikávat; chování 1:1
-by nesplňoval.
+`alert()` blokuje vlákno, vypadá jako systémová chyba a musí se odklikávat; paritu
+s předlohou by nesplňoval.
 
 **Důsledky:** ~20 řádků CSS a JS navíc. Hláška zmizí po 3 sekundách a teprve pak se
 uklidí ze stavu.

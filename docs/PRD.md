@@ -61,7 +61,7 @@ Bod 1 a 4 jsou ty, kde se to reálně může zlomit. Zbytek je z principu splnit
 | Nebude | Proč |
 |--------|------|
 | Účty, přihlášení, synchronizace mezi telefony | Skóre se zapisuje na jednom zařízení. Server by přinesl provoz, náklady a otázky kolem dat — bez užitku pro hru u stolu. |
-| Tmavý motiv | Předloha ho nemá. Přidat ho by rozbilo srovnání 1:1. |
+| Tmavý motiv | Předloha ho nemá; zatím nevyžádán. |
 | Historie kol, undo, statistiky | Předloha je nemá a u stolu je nikdo nežádal. |
 | Publikace do obchodů | Přesně to je předmětem experimentu — cílem je ověřit distribuci **mimo** ně. |
 | Automatizované testy UI | U aplikace téhle velikosti stojí víc, než vynesou. Herní pravidla testovaná jsou. |
