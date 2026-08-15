@@ -1,0 +1,73 @@
+# BACKLOG — možnosti dalšího rozvoje
+
+> Nápady, které **nejsou rozhodnuté ani naplánované**. Nic z toho se nedělá, dokud
+> to nedostane zelenou. Účel souboru je nezapomenout rozbor, ne zavázat se k práci.
+>
+> Co je hotové, patří do [`SPEC.md`](SPEC.md); co se zrovna dělá, do
+> [`CURRENT.md`](CURRENT.md).
+
+**Poslední aktualizace:** 2026-08-15
+
+---
+
+## 1. ~~Naposledy hraní hráči~~ — **hotovo 2026-08-15**
+
+Implementováno jako vylepšení #5 v [`SPEC.md`](SPEC.md), rozhodnutí o úložišti
+je v [`DEV.md`](DEV.md), AD-12.
+
+Řazení podle **posledního použití** (ne četnosti), pamatuje se i barva, strop 20 jmen
+nahradil UI pro mazání. Kdyby se ukázalo, že mazání jednotlivých jmen je potřeba,
+je to nová položka backlogu — ne nedodělek téhle.
+
+---
+
+## 2. Statistika výher a bodování
+
+**Proč:** vědět, kdo v partě vyhrává.
+
+**Není to jen obrazovka navíc.** Aplikace dnes nemá pojem „konec hry" — *Nová hra*
+jen vynuluje skóre. Bez konce hry neexistuje vítěz a není co počítat.
+
+**Otevřená rozhodnutí:**
+
+- **Kdy se hra archivuje.** Implicitně při stisku *Nová hra* (nic navíc pro
+  uživatele, ale archivuje se i omylem rozehraná partie), nebo explicitně tlačítkem
+  *Ukončit hru* (čistší data, krok navíc). Přiklání se k implicitnímu — smazání
+  záznamu je stejně součástí zadání.
+- **Co se ukládá** — datum, jména, skóre, počet kol. Odvozené statistiky se počítají
+  až při zobrazení, neukládají se.
+- **Rozsah mazání** — jednotlivý záznam, nebo i vynulování celé historie?
+
+**Vazba na bod 1:** obojí potřebuje identitu hráče podle jména. Dva oddělené seznamy
+znamenají dva zdroje pravdy o tom, kdo je Petr. Když se dělá obojí, úložiště se
+navrhne jednou.
+
+⚠️ **Past v `js/storage.js`.** `deserialize()` zahodí uložený stav, když nesedí
+`VERSION`. Rozšíření uložených dat bez migrace **smaže rozehranou hru** uživatelům,
+kteří mají aplikaci na ploše. Ať se to udělá jakkoli, tohle se musí ošetřit.
+
+---
+
+## 3. Hlášení chyb
+
+**Proč:** dostat popis chyby i s kontextem, ne jen „nefunguje to".
+
+**Zakládat GitHub issue přes API nejde** — vyžadovalo by to token, ten do statické
+stránky nepatří a znamenal by backend. To by zabilo „bez závislostí, offline first"
+(viz [`../CLAUDE.md`](../CLAUDE.md), kap. 2).
+
+**Reálné varianty:**
+
+- **Odkaz na `issues/new` s předvyplněným titulkem a tělem** přes query parametry.
+  Žádné tajemství, žádný server. Dá se předvyplnit verze cache, `display-mode`,
+  prohlížeč, počet hráčů, číslo kola. Uživatel ale musí mít GitHub účet — u aplikace
+  pro partu u stolu je to spíš pro autora než pro hráče.
+- **Obrazovka „O aplikaci"** s verzí a stavem, který jde zkopírovat do schránky.
+  Pokryje většinu užitku za zlomek práce. Nejspíš to je ta správná odpověď.
+
+---
+
+## Co v backlogu není
+
+**Akceptace na iPhonu** — to není nápad na rozvoj, ale nedokončený úkol. Je
+v [`CURRENT.md`](CURRENT.md).

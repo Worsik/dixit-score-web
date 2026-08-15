@@ -85,6 +85,7 @@ docs/     dokumentace projektu
 | [`docs/SPEC.md`](docs/SPEC.md) | Co se staví — chování a akceptační kritéria |
 | [`docs/DEV.md`](docs/DEV.md) | Jak to stavíme — architektura, rozhodnutí, konvence |
 | [`docs/CURRENT.md`](docs/CURRENT.md) | Kde jsme — hotovo, zbývá, blokery |
+| [`docs/BACKLOG.md`](docs/BACKLOG.md) | Kam dál — nápady, o kterých se zatím nerozhodlo |
 
 ## Pravidla hry
 
