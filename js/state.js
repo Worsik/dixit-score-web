@@ -1,6 +1,7 @@
 import {
   addPlayer, removePlayer, movePlayer as reorderPlayers, startNewGame, applyScores,
-  scoreRound, pointsToDistribute as countPointsToDistribute, MAX_PLAYERS,
+  scoreRound, pointsToDistribute as countPointsToDistribute, remainingBonusPoints,
+  MAX_PLAYERS,
 } from './rules.js';
 import { save, load } from './storage.js';
 import { DEFAULT_COLOR } from './palette.js';
@@ -194,12 +195,22 @@ export function confirmSelection() {
 export const backToSelection = () =>
   update({ scoringDialog: { ...state.scoringDialog, step: 'selection' } });
 
+/**
+ * Picking a player hands them their first point straight away - wanting exactly one
+ * point is the common case, so the extra tap was pure friction.
+ * The tiles are disabled once nothing is left, so this should not be reachable then;
+ * the guard is there so the budget cannot be exceeded by any other route.
+ */
 export function addBonusPlayer(playerId) {
-  if (state.scoringDialog.chosenForBonus.includes(playerId)) return;
+  const { chosenForBonus, bonusAssignments, pointsToDistribute } = state.scoringDialog;
+  if (chosenForBonus.includes(playerId)) return;
+  if (remainingBonusPoints(pointsToDistribute, bonusAssignments) <= 0) return;
+
   update({
     scoringDialog: {
       ...state.scoringDialog,
-      chosenForBonus: [...state.scoringDialog.chosenForBonus, playerId],
+      chosenForBonus: [...chosenForBonus, playerId],
+      bonusAssignments: { ...bonusAssignments, [playerId]: 1 },
     },
   });
 }
@@ -218,8 +229,7 @@ export function removeBonusPlayer(playerId) {
 
 export function incrementBonus(playerId) {
   const { bonusAssignments, pointsToDistribute } = state.scoringDialog;
-  const assigned = Object.values(bonusAssignments).reduce((sum, value) => sum + value, 0);
-  if (assigned >= pointsToDistribute) return;
+  if (remainingBonusPoints(pointsToDistribute, bonusAssignments) <= 0) return;
   update({
     scoringDialog: {
       ...state.scoringDialog,
