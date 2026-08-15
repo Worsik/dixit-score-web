@@ -30,15 +30,19 @@ Aplikace nemá build krok ani závislosti. Potřebuje jen HTTP server — z `fil
 nepoběží, protože ES moduly a service worker to nedovolí.
 
 ```bash
-python tools/dev-server.py 8000
+python tools/dev-server.py 8000          # běžný vývoj
+python tools/dev-server.py 8000 --sw     # test offline režimu
 ```
 
 Pak otevřít `http://localhost:8000`. `localhost` je výjimka z požadavku na HTTPS,
 takže service worker se zaregistruje i bez certifikátu.
 
 > **Nepoužívej `python -m http.server`.** Neposílá `Cache-Control`, takže prohlížeč
-> po úpravě souboru servíruje starou verzi a ladíš přelud. `tools/dev-server.py` je
-> totéž, ale s `no-store`.
+> po úpravě souboru servíruje starou verzi a ladíš přelud.
+>
+> `tools/dev-server.py` navíc ve výchozím stavu podstrčí místo `sw.js` worker, který se
+> sám odregistruje a smaže cache — jinak by starou verzi servíroval zase service worker.
+> Offline režim a instalaci na plochu testuj s přepínačem `--sw`.
 
 ## Testy
 

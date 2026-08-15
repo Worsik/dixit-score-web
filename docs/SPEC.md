@@ -149,6 +149,10 @@ Klepnutí otevře dialog úpravy.
 **Dolní lišta:** vystředěné tlačítko s ikonou hvězdy a textem `scoring_button_round` —
 cs „Hodnocení pro *N*. kolo", en „Scoring for round *N*".
 
+**Obě lišty jsou pevné a vždy viditelné**, scrolluje se jen seznam hráčů — odpovídá
+`Scaffold` v předloze. Stránka jako celek se nescrolluje a **tažení dolů ji neobnoví**;
+nativní aplikace se taky sama od sebe nerestartuje. Viz AD-11 v [`DEV.md`](DEV.md).
+
 > **Texty se opisují doslova** z `values/strings.xml` a `values-cs/strings.xml`.
 > Citace v této kapitole jsou informativní; závazný je obsah zdrojových souborů.
 
@@ -175,6 +179,11 @@ zařadí na konec pořadí. Tlačítko **Zrušit**.
 ### 5.2 Upravit hráče
 
 Pole pro jméno, paleta, oddělovač, řádek pro skóre: **−**, číselné pole, **+**.
+
+**Pole jména se při otevření nezaostřuje** — jinak by na telefonu vyskočila klávesnice
+a zakryla paletu i editor skóre. Klepnutím do pole se přejmenovává normálně. Odpovídá
+předloze, která pole také nezaostřuje; na webu si to vyžádalo explicitní zásah, protože
+`<dialog>` zaostřuje sám (viz AD-4 v [`DEV.md`](DEV.md)).
 
 - **+ / −** změní hodnotu o 1; nečitelná hodnota se čte jako 0
 - Při uložení se nečitelná hodnota skóre **ignoruje** a zůstane původní
