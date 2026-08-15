@@ -90,6 +90,9 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
       a pokryto 4 testy v `test/dialog.test.js`.
 - [x] `tools/dev-server.py` — statický server s `no-store`; `python -m http.server`
       cachoval JS a dvakrát způsobil ladění staré verze kódu
+- [x] **Bonusový bod se přiděluje rovnou při výběru hráče** (odchylka #3) — dlaždice
+      kandidátů jsou zablokované, když nezbývají body. Výpočet zbývajících bodů
+      vytažen do `remainingBonusPoints()` v `rules.js`, kde byl třikrát zduplikovaný.
 
 ## Zbývá
 
@@ -123,3 +126,4 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 | 2026-08-15 | Implementována a ověřena etapa 2 — bodování a nová hra |
 | 2026-08-15 | Implementována etapa 3 — tažení, mřížka, PWA vrstva; ikony zmenšeny z 2 MB na 132 kB; ověřen offline běh |
 | 2026-08-15 | Nasazeno na GitHub Pages; nahlášena a opravena chyba: dialogy ukazovaly údaje předchozího hráče |
+| 2026-08-15 | Bonusový bod se přiděluje rovnou při výběru hráče (odchylka #3 od předlohy) |

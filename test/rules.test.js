@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   updateStorytellerRoles, pointsToDistribute, scoreRound, MAX_PLAYERS, GRID_THRESHOLD,
   reindexTurnOrder, addPlayer, removePlayer, movePlayer, startNewGame, applyScores,
-  canConfirmBonusVotes
+  canConfirmBonusVotes, remainingBonusPoints
 } from '../js/rules.js';
 
 // Test helper: builds a player with sensible defaults.
@@ -185,4 +185,14 @@ test('bonusy lze potvrdit, když jsou body rozdány a každý vybraný má aspo�
 
 test('bez bodů k rozdělení a bez vybraných hráčů lze potvrdit', () => {
   assert.equal(canConfirmBonusVotes(0, [], {}), true);
+});
+
+test('zbývající body jsou rozdíl mezi celkem a rozdaným', () => {
+  assert.equal(remainingBonusPoints(3, {}), 3);
+  assert.equal(remainingBonusPoints(3, { b: 1 }), 2);
+  assert.equal(remainingBonusPoints(3, { b: 1, c: 2 }), 0);
+});
+
+test('bez bodů k rozdělení nezbývá nic', () => {
+  assert.equal(remainingBonusPoints(0, {}), 0);
 });

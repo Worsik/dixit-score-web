@@ -1,5 +1,5 @@
 import { t } from '../i18n.js';
-import { scoreRound, canConfirmBonusVotes } from '../rules.js';
+import { scoreRound, canConfirmBonusVotes, remainingBonusPoints } from '../rules.js';
 import { escapeHtml, withAlpha } from './html.js';
 
 /** Renders whichever of the three steps is current. */
@@ -65,16 +65,17 @@ function renderSelection(state, byId) {
 
 function renderBonusVotes(state, byId) {
   const { voterIds, chosenForBonus, bonusAssignments, pointsToDistribute } = state.scoringDialog;
-  const assigned = Object.values(bonusAssignments).reduce((sum, value) => sum + value, 0);
-  const pointsLeft = pointsToDistribute - assigned;
+  const pointsLeft = remainingBonusPoints(pointsToDistribute, bonusAssignments);
 
   // Candidates are all voters - including those who guessed right.
   const candidates = voterIds.filter((id) => !chosenForBonus.includes(id));
 
+  // Picking a candidate hands them a point, so with nothing left there is nothing to pick.
   const tiles = candidates.map((id) => {
     const player = byId.get(id);
     return `<button type="button" class="bonus-tile" data-bonus-add="${id}"
-              style="background: ${withAlpha(player.color, 0.2)}">
+              style="background: ${withAlpha(player.color, 0.2)}"
+              ${pointsLeft <= 0 ? 'disabled' : ''}>
               ${escapeHtml(player.name)}
             </button>`;
   }).join('');
