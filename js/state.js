@@ -1,7 +1,7 @@
 import {
   addPlayer, removePlayer, movePlayer as reorderPlayers, startNewGame, applyScores,
   scoreRound, pointsToDistribute as countPointsToDistribute, remainingBonusPoints,
-  MAX_PLAYERS,
+  updateStorytellerRoles, MAX_PLAYERS,
 } from './rules.js';
 import { save, load } from './storage.js';
 import { remember, loadKnown, saveKnown } from './known-players.js';
@@ -22,6 +22,7 @@ let state = {
   players: [],
   roundNumber: 1,
   knownPlayers: [],         // names offered in the add dialog, most recent first
+  undo: null,               // { players, roundNumber } from before the last change
   addDialog: { isOpen: false, selectedColor: DEFAULT_COLOR },
   editDialog: { isOpen: false, playerId: null, selectedColor: DEFAULT_COLOR, confirmDelete: false },
   scoringDialog: { ...EMPTY_SCORING },
@@ -33,14 +34,44 @@ const listeners = new Set();
 
 export const getState = () => state;
 
+/** Everything that makes up the game itself; the rest of the state is UI. */
+const GAME_KEYS = ['players', 'roundNumber'];
+
+/**
+ * Takes back the last change - any change, not just scoring.
+ *
+ * One level only: this is for the mis-tap at the table, not for browsing history.
+ * The snapshot is deliberately NOT persisted - keeping it would mean changing the format
+ * of the stored game, and `storage.js` throws the whole record away on a version
+ * mismatch (AD-12). A reload therefore drops the undo (AD-13).
+ */
+export function undoLast() {
+  if (!state.undo) return;
+  update({ players: state.undo.players, roundNumber: state.undo.roundNumber, undo: null });
+}
+
 export function subscribe(listener) {
   listeners.add(listener);
   return () => listeners.delete(listener);
 }
 
-// Applies a patch, persists the game part and notifies subscribers.
+/**
+ * Applies a patch, persists the game part and notifies subscribers.
+ *
+ * The undo point is taken here, in one place, rather than in every action: a patch that
+ * touches the game becomes undoable, a patch that only opens a dialog or shows a toast
+ * does not. A patch may still set `undo` itself - that is how undoLast() avoids
+ * recording its own restore and turning undo into a toggle.
+ */
 function update(patch) {
-  state = { ...state, ...patch };
+  const touchesGame = GAME_KEYS.some((key) => key in patch);
+  const undo = 'undo' in patch
+    ? patch.undo
+    : touchesGame
+      ? { players: state.players, roundNumber: state.roundNumber }
+      : state.undo;
+
+  state = { ...state, ...patch, undo };
   save({ players: state.players, roundNumber: state.roundNumber });
   listeners.forEach((listener) => listener());
 }
@@ -125,6 +156,20 @@ export function confirmEditPlayer(name, score) {
           }
         : player
     ),
+    editDialog: { ...state.editDialog, isOpen: false },
+  });
+}
+
+/**
+ * Hands the storyteller role to the edited player.
+ * Without this the role could only be set when starting a new game, which zeroes every
+ * score - so a forgotten round used to cost the whole game.
+ */
+export function makeStoryteller() {
+  const { playerId } = state.editDialog;
+  if (!state.players.some((it) => it.id === playerId)) return;
+  update({
+    players: updateStorytellerRoles(state.players, playerId),
     editDialog: { ...state.editDialog, isOpen: false },
   });
 }

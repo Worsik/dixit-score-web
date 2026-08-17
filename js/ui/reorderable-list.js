@@ -91,12 +91,14 @@ export function attachReorder(container, { onMove }) {
   }
 
   container.addEventListener('pointerdown', (event) => {
+    // Cleared for EVERY pointerdown, before the early return below - not just for the
+    // ones landing on a card. A cancelled gesture produces no click at all, and a stale
+    // flag would swallow the next legitimate tap. That tap is often a bar button
+    // (Undo, New game, Add player), which never reaches the card branch.
+    justDragged = false;
+
     const target = event.target.closest('[data-player-id]');
     if (!target) return;
-
-    // Clear here rather than waiting for a click: a cancelled gesture produces no
-    // click at all, and a stale flag would swallow the next legitimate tap.
-    justDragged = false;
 
     card = target;
     list = target.parentElement;

@@ -38,6 +38,11 @@ export const STRINGS = {
     ios_install_hint: 'To install: Share → Add to Home Screen',
     // Not in the Android original - added with the recent players suggestions.
     recent_players: 'Recent players',
+    // Not in the Android original - added with the UX improvements.
+    undo_button: 'Undo',
+    undo_hint: 'Takes back the last change',
+    make_storyteller_button: 'Make storyteller',
+    no_players_for_scoring: 'Add players first',
   },
   cs: {
     app_name: 'Dixit Skóre',
@@ -74,6 +79,10 @@ export const STRINGS = {
     max_players_reached: 'Dosáhli jste maximálního počtu hráčů',
     ios_install_hint: 'Instalace: Sdílet → Přidat na plochu',
     recent_players: 'Naposledy hráli',
+    undo_button: 'Vrátit',
+    undo_hint: 'Vrátí poslední změnu',
+    make_storyteller_button: 'Udělat vypravěčem',
+    no_players_for_scoring: 'Nejdřív přidejte hráče',
   },
 };
 

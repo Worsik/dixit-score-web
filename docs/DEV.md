@@ -254,6 +254,55 @@ Vlastní klíč tuhle past obchází úplně: formát hry se nemění, takže ne
   znovu, vrátí se taky sám. Kdyby mazání jednotlivých jmen bylo potřeba, je to nová
   funkce, ne dořešení téhle.
 
+### AD-13: Univerzální „Vrátit", snímek se bere v `update()` a neukládá se
+
+**Rozhodnutí:** *Vrátit* vrací **poslední změnu, ať byla jakákoli** — přidání, smazání,
+úpravu, přetažení, změnu vypravěče, bodování i novou hru. Jedna úroveň. Snímek se bere
+na **jednom místě**, v `update()`, a drží se jen v paměti (`state.undo`).
+
+**Důvod:** První verze uměla vrátit jen bodování a novou hru a **každá jiná změna
+tlačítko schovala**. Od stolu to vypadalo, že se undo „spotřebovalo" něčím nesouvisejícím.
+Tlačítko pojmenované *Vrátit* slibuje vrácení poslední změny, tak ať to dělá.
+
+Univerzální varianta je navíc **méně kódu**: zmizelo pět rozesetých `undo: null`
+a s nimi celá třída chyb „u nové akce jsem zapomněl snímek zneplatnit".
+
+**Jak se pozná změna hry:** patch v `update()` sahá na `players` nebo `roundNumber`
+(`GAME_KEYS`). Otevření dialogu, menu ani hláška snímek nevytvoří. Patch smí `undo`
+nastavit sám — tak `undoLast()` zabrání tomu, aby se zaznamenalo vlastní obnovení
+a z tlačítka se stal přepínač.
+
+**Neukládá se do `localStorage`,** takže po obnovení stránky se vrátit nedá. Uložit
+by znamenalo změnit formát uloženého záznamu, a `storage.js` při neshodě `VERSION`
+zahodí celou rozehranou hru (AD-12). Vracet se chce vteřinu po chybném klepnutí,
+ne po restartu telefonu.
+
+**Důsledky:**
+- Nová akce nemusí o undo vědět vůbec nic — stačí, že jde přes `update()`.
+- **Jedna úroveň, ne zásobník.** Pokrývá „ťukl jsem vedle" a nevyvolává otázku,
+  jak hluboko se dá jít.
+- Vrácení přidání hráče **nechá jeho jméno mezi naposledy hranými** (jiný klíč
+  v úložišti, viz AD-12). Je to spíš žádoucí, ale je to odchylka od „vrátí se všechno".
+
+### AD-14: Držení displeje přes Screen Wake Lock
+
+**Rozhodnutí:** `navigator.wakeLock.request('screen')` v `js/wake-lock.js`, bez přepínače,
+vše tiše selhává.
+
+**Důvod:** Nativní API, žádná závislost — v duchu pravidla „ověř, že to neumí prohlížeč".
+Bez přepínače proto, že zámek se při schování stránky uvolní sám, takže scénář „mám to
+v kapse a svítí to" API řeší za nás. Zbývá jen „leží to na stole", což je přesně ten
+důvod, proč se to zapíná.
+
+**Důsledky:**
+- ⚠️ **Zámek se automaticky uvolňuje, kdykoli se stránka schová.** Bez opětovného
+  vyžádání na `visibilitychange` by fungoval do prvního přepnutí aplikace a pak by se
+  tvářil rozbitě.
+- Vyžaduje zabezpečený kontext — Pages a `localhost` ano, LAN adresa ne. Stejné omezení
+  jako service worker, takže testovat z telefonu přes IP nemá smysl.
+- V úsporném režimu iOS požadavek selže. Musí to zůstat bez následku.
+- Safari až od iOS 16.4; na starším iPhonu se prostě nic nestane.
+
 ---
 
 ## 2. Struktura projektu
@@ -270,6 +319,7 @@ js/state.js                   ≙ GameViewModel.kt   — stav a akce
 js/rules.js                   ≙ bodovací logika    — čisté funkce, bez DOM
 js/storage.js                 serializace + localStorage (rozehraná hra)
 js/known-players.js           naposledy hraní hráči — vlastní klíč v úložišti (AD-12)
+js/wake-lock.js               držení displeje rozsvíceného (AD-14)
 js/i18n.js                    ≙ values/strings.xml, values-cs/strings.xml
 js/ui/game-screen.js          ≙ GameScreen.kt
 js/ui/player-card.js          ≙ PlayerRow

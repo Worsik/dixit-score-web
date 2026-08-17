@@ -24,13 +24,18 @@ export function renderGameScreen(state) {
           ${renderNewGameMenu(state)}
         </div>
         <button class="button-text" data-action="add-player">${t('add_player')}</button>
+        ${state.undo ? `<button class="button-text" data-action="undo"
+                          title="${t('undo_hint')}">&#8630; ${t('undo_button')}</button>` : ''}
       </div>
     </header>
     <ul class="player-list${state.players.length > GRID_THRESHOLD ? ' is-grid' : ''}">
       ${state.players.map(renderPlayerCard).join('')}
     </ul>
     <footer class="bottom-bar">
-      <button class="button-primary" data-action="scoring">
+      <!-- Without players there is no storyteller and openScoring() would do nothing at
+           all; a disabled button says so instead of looking broken. -->
+      <button class="button-primary" data-action="scoring"
+              ${state.players.length === 0 ? `disabled title="${t('no_players_for_scoring')}"` : ''}>
         ${t('scoring_button_round', state.roundNumber)}
       </button>
     </footer>
