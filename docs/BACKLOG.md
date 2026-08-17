@@ -6,7 +6,7 @@
 > Co je hotové, patří do [`SPEC.md`](SPEC.md); co se zrovna dělá, do
 > [`CURRENT.md`](CURRENT.md).
 
-**Poslední aktualizace:** 2026-08-15
+**Poslední aktualizace:** 2026-08-17
 
 ---
 
@@ -64,6 +64,35 @@ stránky nepatří a znamenal by backend. To by zabilo „bez závislostí, offl
   pro partu u stolu je to spíš pro autora než pro hráče.
 - **Obrazovka „O aplikaci"** s verzí a stavem, který jde zkopírovat do schránky.
   Pokryje většinu užitku za zlomek práce. Nejspíš to je ta správná odpověď.
+
+---
+
+## 4.–7. a 9. ~~Dávka drobných vylepšení~~ — **hotovo 2026-08-17**
+
+Vylepšení #6–#10 v [`SPEC.md`](SPEC.md). Rozhodnutí jsou v [`DEV.md`](DEV.md):
+**AD-13** (snímek pro *Vrátit* se neukládá) a **AD-14** (držení displeje).
+
+| | Co | Kde to je |
+|---|---|---|
+| 4 | Vzít zpět poslední kolo i *Novou hru* | tlačítko **Vrátit** v horní liště |
+| 5 | Změnit vypravěče bez nové hry | **Udělat vypravěčem** v dialogu úpravy |
+| 6 | Dotykové plochy na 44 px | `.icon-button`, paleta, textová tlačítka |
+| 7 | Držet displej rozsvícený | `js/wake-lock.js` |
+| 9 | *Hodnocení* bez hráčů je zakázané | spodní lišta |
+
+---
+
+## 8. Ukázat, kdo vede
+
+**Proč:** seznam je v pořadí u stolu, takže průběžné vedení se musí luštit ze všech
+čísel.
+
+**Řazení podle skóre ne** — pořadí v seznamu *je* pořadí hráčů a mění se tažením,
+takže by se to rvalo. Levnější a bez konfliktu: označit vedoucího štítkem na kartě,
+stejně jako se dnes označuje vypravěč.
+
+*(Zbylo jako jediné neudělané z rozboru z 2026-08-15 — mění vzhled karty, takže
+by se to mělo nejdřív vidět.)*
 
 ---
 

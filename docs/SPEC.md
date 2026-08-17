@@ -38,6 +38,12 @@ se vědomě. Každý rozdíl proti předloze patří sem — jinak neexistuje.
 | 4 | doplněná funkce | Nad 6 hráčů **nelze pořadí měnit vůbec** — `GameScreen.kt` má u mřížky komentář *„Dragging not supported in grid view"* | Tažení funguje i v mřížce | Předloha to nezvážila a nezavrhla, jen nedopsala: její `ReorderableLazyColumn` uměl jen `LazyColumn`. Zamčené pořadí u 7–12 hráčů je díra ve funkci, kterou aplikace jinak má. |
 | 5 | doplněná funkce | Jméno hráče se pokaždé vypisuje ručně | Dialog přidání nabízí naposledy hrané hráče jako dlaždice; klepnutí předvyplní jméno **i barvu** | U stálé party se pokaždé psala stejná jména. Vyžádáno. Dlaždice se řadí od naposledy použitého, ne podle četnosti — kdo hrál padesátkrát loni, jinak přebije toho, s kým se hraje teď. |
 
+| 6 | doplněná funkce | Žádná změna nejde vzít zpět; náprava po chybném kole je ruční přepsání skóre každému hráči | Tlačítko **Vrátit** v horní liště vrátí **poslední změnu** — bodování, novou hru, přidání, smazání, úpravu, přetažení i změnu vypravěče | Chybné klepnutí u stolu je běžné a náprava byla nepřiměřeně drahá. Jedna úroveň; snímek se **neukládá**, takže po obnovení stránky vrátit nejde (viz `DEV.md`, AD-13). |
+| 7 | doplněná funkce | Vypravěče lze určit jen při nové hře, která vynuluje skóre | Tlačítko **Udělat vypravěčem** v dialogu úpravy hráče | Po zapomenutém kole nebo změně pořadí nešlo roli opravit jinak než ztrátou celé partie. Logika už existovala (`updateStorytellerRoles()` umí `designatedId`), chyběl jen vstup z UI. |
+| 8 | vylepšení UX | Tlačítko **Hodnocení** bez hráčů tiše neudělá nic | Je zakázané a vysvětlí proč | `openScoring()` bez vypravěče končí `return`, takže aplikace na moment vypadala rozbitě. |
+| 9 | vylepšení UX | — | Displej zůstává rozsvícený, dokud je aplikace vidět | Telefon leží na stole a mezi koly zhasínal. Screen Wake Lock API, tiše selže tam, kde není (viz `DEV.md`, AD-14). |
+| 10 | vylepšení UX | Dotykové plochy pod 44 px (`.icon-button`, paleta, textová tlačítka) | Všechny na 44 px | Nejvíc mačkané ovládání v aplikaci — bonusový krok u stolu, často v přítmí. |
+
 **Pravidlo:** předloha je výchozí bod, ne strop. Vylepšení jsou vítaná, ale musí být
 **vyžádaná nebo odsouhlasená** a zapsaná do této tabulky. Co se jeví jako chyba předlohy,
 se nadále **nemá tiše replikovat ani tiše opravovat** — nahlas se to pojmenuje a rozhodne.

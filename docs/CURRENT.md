@@ -98,6 +98,15 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 - [x] `tools/dev-server.py` neutralizuje service worker, aby dev neladil starou verzi
 - [x] **Tažení funguje i v mřížce nad 6 hráčů** (vylepšení #4) — předloha to neuměla,
       takže u 7–12 hráčů bylo pořadí zamčené. `insertionTarget()` rozhoduje ve dvou osách.
+- [x] **Dávka UX vylepšení** (vylepšení #6–#10) — **univerzální *Vrátit*** (AD-13),
+      *Udělat vypravěčem* v dialogu úpravy, zakázané *Hodnocení* bez hráčů,
+      držení displeje přes Screen Wake Lock (AD-14), dotykové plochy na 44 px.
+      Paleta barev je `minmax(0, 44px)` — pevných 44 px by přeteklo na iPhonu SE,
+      `1fr` naopak sebralo dialogu šířku a políčka spadla na 29 px.
+- [x] **Po tažení se spolklo první klepnutí na tlačítko v liště** — `justDragged` se
+      rušil až za early returnem v `pointerdown`, takže se vynuloval jen při klepnutí
+      na kartu hráče. Klepnutí na *Vrátit*, *Nová hra* nebo *Přidat hráče* po přetažení
+      nefungovalo napoprvé. Chyba byla v kódu od etapy 3, odhalilo ji až undo.
 - [x] **Nabídka naposledy hraných hráčů v dialogu přidání** (vylepšení #5) — nový modul
       `js/known-players.js` s vlastním klíčem v úložišti (AD-12), 12 testů. Řadí se od
       naposledy použitého, strop 20 jmen, nabízí se nejvýš 8. Klepnutí předvyplní jméno
@@ -118,6 +127,7 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 
 - Zda tažení prstem nekoliduje se scrollováním (AD-9)
 - Zda se dlaždice naposledy hraných vejdou nad klávesnici a dají se trefit prstem
+- Zda drží displej rozsvícený (Safari až od iOS 16.4, v úsporném režimu selže)
 - Zda podržení na iOS nevyvolá kontextové menu
 - Zda instalace na plochu proběhne a aplikace se spustí bez adresního řádku
 - Zda iOS neodstřelí uložená data
@@ -148,3 +158,4 @@ v [`BACKLOG.md`](BACKLOG.md).
 | 2026-08-15 | Tažení doplněno i do dvousloupcové mřížky (vylepšení #4) |
 | 2026-08-15 | Založen `BACKLOG.md` — nápady na rozvoj (statistika, hlášení chyb) bez rozhodnutí |
 | 2026-08-15 | Nabídka naposledy hraných hráčů v dialogu přidání (vylepšení #5, AD-12) |
+| 2026-08-17 | Rozbor UX a dávka vylepšení #6–#10 (vrátit kolo, vypravěč, wake lock, dotykové plochy) |

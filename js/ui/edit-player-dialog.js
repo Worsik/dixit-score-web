@@ -26,6 +26,12 @@ export function renderEditPlayerDialog(state) {
         <button type="button" class="button-primary" data-action="score-up"
                 aria-label="+">&#9650;</button>
       </div>
+      ${player.isStoryteller ? '' : `
+        <hr>
+        <button type="button" class="button-text" data-action="make-storyteller">
+          ${t('make_storyteller_button')}
+        </button>
+      `}
       <div class="dialog-actions">
         <button type="button" class="button-text button-danger" data-action="edit-delete">
           ${t('delete_button')}

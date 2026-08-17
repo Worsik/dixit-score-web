@@ -142,6 +142,7 @@ button:disabled {
   border: none;
   color: var(--on-background);
   padding: 8px 12px;
+  min-height: 44px;
 }
 
 .button-danger { color: var(--error); }
@@ -202,16 +203,23 @@ dialog hr { width: 100%; border: none; border-top: 1px solid var(--outline); mar
 
 /* --- Paleta barev --- */
 
+/* minmax(0, 44px), ne 1fr ani pevných 44px:
+   - `1fr` nemá vlastní šířku, takže by se dialog (šířka podle obsahu) zúžil
+     a políčka by spadla na ~29 px — horší než původních 40;
+   - pevných 44px by zase přeteklo na užších telefonech (iPhone SE).
+   Takhle si paleta drží 44 px, kde je místo, a jinde se smrskne. */
 .color-picker {
   display: grid;
-  grid-template-columns: repeat(6, 40px);
+  grid-template-columns: repeat(6, minmax(0, 44px));
   gap: 8px;
   justify-content: space-evenly;
 }
 
 .swatch {
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  max-width: 44px;
+  aspect-ratio: 1;
+  justify-self: center;
   border-radius: 50%;
   border: 1px solid var(--outline);
   padding: 0;
@@ -321,13 +329,16 @@ dialog hr { width: 100%; border: none; border-top: 1px solid var(--outline); mar
 .bonus-name { flex: 1; overflow-wrap: anywhere; }
 .bonus-points { min-width: 1.5rem; text-align: center; }
 
+/* 44px je doporučené minimum pro prst. Zrovna tahle tlačítka (▲ ▼ 🗑 v bonusovém
+   kroku) se mačkají nejčastěji, u stolu a často v přítmí. */
 .icon-button {
   background: none;
   border: none;
   color: var(--on-background);
   font-size: 1rem;
   padding: 8px;
-  min-width: 40px;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .summary-row {

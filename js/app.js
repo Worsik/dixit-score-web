@@ -7,7 +7,7 @@ import {
   backToSelection, addBonusPlayer, removeBonusPlayer, incrementBonus, decrementBonus,
   confirmBonusVotes, backFromSummary, confirmScores,
   toggleNewGameMenu, startGameWith, movePlayer,
-  clearMessage,
+  makeStoryteller, undoLast, clearMessage,
 } from './state.js';
 import { t } from './i18n.js';
 import { attachReorder } from './ui/reorderable-list.js';
@@ -16,6 +16,7 @@ import { renderAddPlayerDialog } from './ui/add-player-dialog.js';
 import { renderEditPlayerDialog, renderConfirmDeleteDialog } from './ui/edit-player-dialog.js';
 import { renderScoringDialog } from './ui/scoring-dialog.js';
 import { syncDialog } from './ui/dialog.js';
+import { keepScreenAwake } from './wake-lock.js';
 
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
@@ -80,6 +81,7 @@ function showToast(text) {
 app.addEventListener('click', (event) => {
   if (event.target.closest('[data-action="add-player"]')) return openAddDialog();
   if (event.target.closest('[data-action="scoring"]')) return openScoring();
+  if (event.target.closest('[data-action="undo"]')) return undoLast();
 
   if (event.target.closest('[data-action="new-game"]')) {
     return toggleNewGameMenu(!getState().newGameMenuOpen);
@@ -149,6 +151,7 @@ editDialog.addEventListener('click', (event) => {
 
   if (action === 'edit-cancel') closeEditDialog();
   if (action === 'edit-delete') askDeleteConfirm();
+  if (action === 'make-storyteller') makeStoryteller();
   if (action === 'edit-confirm') {
     confirmEditPlayer(editDialog.querySelector('#edit-name').value, scoreInput.value);
   }
@@ -254,3 +257,4 @@ init();
 subscribe(render);
 render();
 showIosInstallHint();
+keepScreenAwake();
