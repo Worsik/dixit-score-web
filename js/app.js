@@ -7,6 +7,8 @@ import {
   backToSelection, addBonusPlayer, removeBonusPlayer, incrementBonus, decrementBonus,
   confirmBonusVotes, backFromSummary, confirmScores,
   toggleNewGameMenu, startGameWith, movePlayer,
+  openSetupDialog, closeSetupDialog, addDraftPlayer, removeDraftPlayer,
+  cycleDraftColor, confirmSetup,
   makeStoryteller, undoLast, clearMessage,
 } from './state.js';
 import { t } from './i18n.js';
@@ -15,6 +17,7 @@ import { renderGameScreen } from './ui/game-screen.js';
 import { renderAddPlayerDialog } from './ui/add-player-dialog.js';
 import { renderEditPlayerDialog, renderConfirmDeleteDialog } from './ui/edit-player-dialog.js';
 import { renderScoringDialog } from './ui/scoring-dialog.js';
+import { renderSetupDialog } from './ui/setup-dialog.js';
 import { syncDialog } from './ui/dialog.js';
 import { keepScreenAwake } from './wake-lock.js';
 
@@ -24,6 +27,7 @@ const addDialog = document.querySelector('#add-dialog');
 const editDialog = document.querySelector('#edit-dialog');
 const confirmDeleteDialog = document.querySelector('#confirm-delete-dialog');
 const scoringDialog = document.querySelector('#scoring-dialog');
+const setupDialog = document.querySelector('#setup-dialog');
 
 // --- Rendering ---
 
@@ -55,6 +59,10 @@ function render() {
   syncDialog(scoringDialog, state.scoringDialog.isOpen, () => renderScoringDialog(state));
   refreshTriStateCheckbox();
 
+  syncDialog(setupDialog, state.setupDialog.isOpen,
+    () => renderSetupDialog(state), ['setup-name']);
+  refreshConfirmState(setupDialog, 'setup-name', 'setup-add');
+
   if (state.message) showToast(t(state.message));
 }
 
@@ -82,6 +90,7 @@ app.addEventListener('click', (event) => {
   if (event.target.closest('[data-action="add-player"]')) return openAddDialog();
   if (event.target.closest('[data-action="scoring"]')) return openScoring();
   if (event.target.closest('[data-action="undo"]')) return undoLast();
+  if (event.target.closest('[data-action="setup"]')) return openSetupDialog();
 
   if (event.target.closest('[data-action="new-game"]')) {
     return toggleNewGameMenu(!getState().newGameMenuOpen);
@@ -99,6 +108,45 @@ document.addEventListener('click', (event) => {
   if (!getState().newGameMenuOpen) return;
   if (event.target.closest('.menu')) return;
   toggleNewGameMenu(false);
+});
+
+// --- Setup dialog ---
+
+/** Reads the name field, hands it over and clears it for the next one. */
+function addFromSetupField() {
+  const input = setupDialog.querySelector('#setup-name');
+  const name = input.value;
+  input.value = '';
+  addDraftPlayer(name);
+}
+
+setupDialog.addEventListener('input', () =>
+  refreshConfirmState(setupDialog, 'setup-name', 'setup-add'));
+
+setupDialog.addEventListener('click', (event) => {
+  const known = event.target.closest('[data-setup-known]');
+  if (known) return addDraftPlayer(known.dataset.setupKnown, known.dataset.setupColor);
+
+  const cycle = event.target.closest('[data-setup-cycle]');
+  if (cycle) return cycleDraftColor(Number(cycle.dataset.setupCycle));
+
+  const remove = event.target.closest('[data-setup-remove]');
+  if (remove) return removeDraftPlayer(Number(remove.dataset.setupRemove));
+
+  const { action } = event.target.dataset;
+  if (action === 'setup-add') addFromSetupField();
+  if (action === 'setup-cancel') closeSetupDialog();
+  if (action === 'setup-confirm') confirmSetup();
+});
+
+// Enter adds the typed name rather than closing the dialog.
+setupDialog.addEventListener('submit', (event) => {
+  event.preventDefault();
+  addFromSetupField();
+});
+
+setupDialog.addEventListener('close', () => {
+  if (getState().setupDialog.isOpen) closeSetupDialog();
 });
 
 // --- Add player dialog ---

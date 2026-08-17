@@ -5,7 +5,7 @@ import {
 } from './rules.js';
 import { save, load } from './storage.js';
 import { remember, loadKnown, saveKnown } from './known-players.js';
-import { DEFAULT_COLOR } from './palette.js';
+import { DEFAULT_COLOR, nextFreeColor } from './palette.js';
 
 const EMPTY_SCORING = {
   isOpen: false,
@@ -26,6 +26,9 @@ let state = {
   addDialog: { isOpen: false, selectedColor: DEFAULT_COLOR },
   editDialog: { isOpen: false, playerId: null, selectedColor: DEFAULT_COLOR, confirmDelete: false },
   scoringDialog: { ...EMPTY_SCORING },
+  // Roster being composed before the first game; real players exist only on confirm,
+  // so cancelling leaves no trace.
+  setupDialog: { isOpen: false, draft: [] },
   newGameMenuOpen: false,
   message: null,
 };
@@ -333,6 +336,84 @@ export function confirmScores() {
     players: applyScores(state.players, { storytellerId, storytellerPoints, voterPoints }),
     roundNumber: state.roundNumber + 1,
     scoringDialog: { ...state.scoringDialog, isOpen: false },
+  });
+}
+
+// --- Setup dialog (first game, empty roster) ---
+
+const draftColors = (draft, except = -1) =>
+  draft.filter((_, index) => index !== except).map((it) => it.color);
+
+export const openSetupDialog = () => update({ setupDialog: { isOpen: true, draft: [] } });
+
+export const closeSetupDialog = () =>
+  update({ setupDialog: { ...state.setupDialog, isOpen: false } });
+
+/** Adds a name to the roster. Without a colour it takes the first free one. */
+export function addDraftPlayer(name, color = null) {
+  const { draft } = state.setupDialog;
+  const trimmed = name.trim();
+  if (!trimmed || draft.length >= MAX_PLAYERS) return;
+
+  update({
+    setupDialog: {
+      ...state.setupDialog,
+      draft: [...draft, { name: trimmed, color: color ?? nextFreeColor(draftColors(draft)) }],
+    },
+  });
+}
+
+export function removeDraftPlayer(index) {
+  update({
+    setupDialog: {
+      ...state.setupDialog,
+      draft: state.setupDialog.draft.filter((_, it) => it !== index),
+    },
+  });
+}
+
+/** Tapping the swatch moves the player to the next colour nobody else has. */
+export function cycleDraftColor(index) {
+  const { draft } = state.setupDialog;
+  const current = draft[index];
+  if (!current) return;
+
+  update({
+    setupDialog: {
+      ...state.setupDialog,
+      draft: draft.map((it, at) => at === index
+        ? { ...it, color: nextFreeColor(draftColors(draft, index), it.color) }
+        : it),
+    },
+  });
+}
+
+/**
+ * Turns the roster into real players. The first one ends up as storyteller, because
+ * that is what updateStorytellerRoles() does with a fresh list - no special case needed.
+ */
+export function confirmSetup() {
+  const { draft } = state.setupDialog;
+  if (draft.length === 0) return;
+
+  const players = draft.reduce((acc, { name, color }) => addPlayer(acc, {
+    id: crypto.randomUUID(),
+    name,
+    color,
+    score: 0,
+    isStoryteller: false,
+    isNextStoryteller: false,
+    turnOrder: acc.length,
+  }), []);
+
+  const knownPlayers = draft.reduce(remember, state.knownPlayers);
+  saveKnown(knownPlayers);
+
+  update({
+    players,
+    roundNumber: 1,
+    knownPlayers,
+    setupDialog: { isOpen: false, draft: [] },
   });
 }
 

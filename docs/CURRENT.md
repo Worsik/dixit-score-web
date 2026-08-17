@@ -68,7 +68,7 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
       včetně blokace potvrzení, návrat ze souhrnu zachová bonusy, zrušení nic nezapíše,
       nová hra vynuluje skóre a nastaví vypravěče, okrajové stavy (0 hráčů, 1 hráč)
 
-**Testy: 57, všechny zelené.**
+**Testy: 65, všechny zelené.**
 
 ### Etapa 3
 
@@ -98,6 +98,12 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 - [x] `tools/dev-server.py` neutralizuje service worker, aby dev neladil starou verzi
 - [x] **Tažení funguje i v mřížce nad 6 hráčů** (vylepšení #4) — předloha to neuměla,
       takže u 7–12 hráčů bylo pořadí zamčené. `insertionTarget()` rozhoduje ve dvou osách.
+- [x] **Dialog sestavy pro první hru** (vylepšení #11, AD-15) — *Nová hra* bez hráčů
+      otevírala prázdné menu, což byla zděděná vada z předlohy; skutečný uživatel na
+      to tlačítko sáhl jako na první věc v aplikaci. Teď se skládá celá sestava na
+      jednom místě: dlaždice naposledy hraných, jméno + automatická barva, klepnutí
+      na kolečko cyklí na další volnou. S hráči se tlačítko jmenuje *Další hra*.
+      `nextFreeColor()` v `palette.js`, 8 testů.
 - [x] **Dávka UX vylepšení** (vylepšení #6–#10) — **univerzální *Vrátit*** (AD-13),
       *Udělat vypravěčem* v dialogu úpravy, zakázané *Hodnocení* bez hráčů,
       držení displeje přes Screen Wake Lock (AD-14), dotykové plochy na 44 px.
@@ -127,6 +133,7 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 
 - Zda tažení prstem nekoliduje se scrollováním (AD-9)
 - Zda se dlaždice naposledy hraných vejdou nad klávesnici a dají se trefit prstem
+- Zda se do dialogu sestavy dá pohodlně psát a scrollovat sestavou při 12 hráčích
 - Zda drží displej rozsvícený (Safari až od iOS 16.4, v úsporném režimu selže)
 - Zda podržení na iOS nevyvolá kontextové menu
 - Zda instalace na plochu proběhne a aplikace se spustí bez adresního řádku
@@ -159,3 +166,5 @@ v [`BACKLOG.md`](BACKLOG.md).
 | 2026-08-15 | Založen `BACKLOG.md` — nápady na rozvoj (statistika, hlášení chyb) bez rozhodnutí |
 | 2026-08-15 | Nabídka naposledy hraných hráčů v dialogu přidání (vylepšení #5, AD-12) |
 | 2026-08-17 | Rozbor UX a dávka vylepšení #6–#10 (vrátit kolo, vypravěč, wake lock, dotykové plochy) |
+| 2026-08-17 | Undo předěláno na univerzální — vrací poslední změnu, ať byla jakákoli |
+| 2026-08-17 | Dialog sestavy pro první hru (vylepšení #11, AD-15) — z pozorování uživatele |

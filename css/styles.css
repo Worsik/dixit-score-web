@@ -201,6 +201,45 @@ dialog hr { width: 100%; border: none; border-top: 1px solid var(--outline); mar
   white-space: nowrap;
 }
 
+/* --- Dialog sestavy --- */
+
+.setup-empty { margin: 0; opacity: 0.7; font-size: 0.9rem; }
+
+.setup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* Dvanáct hráčů se do dialogu nevejde, scrolluje tedy jen sestava. */
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.setup-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+}
+
+.setup-swatch {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--outline);
+  padding: 0;
+}
+
+.setup-name { flex: 1; overflow-wrap: anywhere; }
+
+.setup-add { display: flex; align-items: center; gap: 8px; }
+.setup-add input { flex: 1; min-width: 0; padding: 8px; font-size: 1rem; }
+
 /* --- Paleta barev --- */
 
 /* minmax(0, 44px), ne 1fr ani pevných 44px:

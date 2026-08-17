@@ -44,6 +44,8 @@ se vědomě. Každý rozdíl proti předloze patří sem — jinak neexistuje.
 | 9 | vylepšení UX | — | Displej zůstává rozsvícený, dokud je aplikace vidět | Telefon leží na stole a mezi koly zhasínal. Screen Wake Lock API, tiše selže tam, kde není (viz `DEV.md`, AD-14). |
 | 10 | vylepšení UX | Dotykové plochy pod 44 px (`.icon-button`, paleta, textová tlačítka) | Všechny na 44 px | Nejvíc mačkané ovládání v aplikaci — bonusový krok u stolu, často v přítmí. |
 
+| 11 | doplněná funkce | **Nová hra** s prázdným seznamem otevře **prázdné menu** — slepá ulička (stejně v předloze, `GameScreen.kt:130` nemá `enabled`) | Bez hráčů se tlačítko jmenuje **Nová hra** a otevře **dialog sestavy**; s hráči se jmenuje **Další hra** a chová se jako dřív | Skutečný uživatel na *Novou hru* sáhl jako na první věc v aplikaci — je to nejpřirozenější první krok, ale prvním krokem bylo *Přidat hráče*. Dialog navíc nahradí šest průchodů modálem jedním místem. |
+
 **Pravidlo:** předloha je výchozí bod, ne strop. Vylepšení jsou vítaná, ale musí být
 **vyžádaná nebo odsouhlasená** a zapsaná do této tabulky. Co se jeví jako chyba předlohy,
 se nadále **nemá tiše replikovat ani tiše opravovat** — nahlas se to pojmenuje a rozhodne.
