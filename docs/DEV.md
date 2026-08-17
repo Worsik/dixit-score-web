@@ -405,6 +405,60 @@ V obrázku jde o to, čí je která karta a kdo kam hlasoval, ne o to, co je na 
 
 ---
 
+### AD-18: Výměna sestavy je *Nová hra*, ne „vyprázdnit seznam"
+
+**Rozhodnutí:** Výměnu party dělá položka **Nová hra** v nabídce ⋮, která rovnou otevře
+dialog sestavy. Žádná samostatná akce „vyprázdnit seznam", žádný potvrzovací dialog.
+
+**Důvod:** Zvažovala se dvoukroková varianta — vyprázdnit seznam a pak si najít tlačítko
+*Nová hra*. Jednokroková vyhrála na třech místech:
+
+1. **`confirmSetup()` sestavu odjakživa nahrazuje.** Staví hráče přes `reduce(…, [])`, tedy
+   od nuly, a nastavuje `roundNumber: 1`. Nad neprázdným seznamem dělá přesně to, co je
+   potřeba — **nová akce ve stavu proto nevznikla vůbec**.
+2. **Zrušit nenechá stopu.** Ve dvoukrokové verzi vedlo zrušení sestavy po vymazání
+   k prázdnému seznamu a člověk si musel vzpomenout na *Vrátit*.
+3. **Undo kryje ten jeden skutečný krok.** Potvrzení sahá na `players` i `roundNumber`,
+   takže `update()` bere snímek (AD-13) a *Vrátit* obnoví starou partu i číslo kola.
+
+Proto **není potvrzovací dialog** ani červené zvýraznění. Červená patří nevratnému.
+
+**Důsledky:**
+- Položka se **neukazuje u prázdného seznamu** — hlavní tlačítko se tam jmenuje stejně
+  a dělá totéž (#11), takže by to bylo dvakrát stejné slovo na jedné obrazovce.
+- ⚠️ **Známé riziko:** *Nová hra* a *Další hra* se liší jedním přídavným jménem a z popisků
+  nejde poznat, která z nich rozpustí partu. Bereme vědomě — špatný odhad stojí otevření
+  dialogu a *Zrušit*. Kdyby si to lidé pletli, je to oprava popisku, ne přestavba.
+- Stará parta se neztratí: `suggest()` filtruje známá jména proti **draftu**, ne proti
+  aktuálním hráčům, takže se všichni objeví mezi dlaždicemi *Naposledy hráli*.
+- Backlogový bod 2 (statistiky) tím dostal háček — potvrzení *Nové hry* je okamžik, kdy
+  aplikace ví, že předchozí hra skončila. Nedělá se, jen je to poznamenané.
+
+---
+
+### AD-19: Jedno pole `openMenu` místo příznaku na každou nabídku
+
+**Rozhodnutí:** `state.newGameMenuOpen` (boolean) nahradilo `state.openMenu`
+(`null | 'new-game' | 'overflow'`).
+
+**Důvod:** Se dvěma rozbalovacími nabídkami v liště boolean nestačí, a hlavně by tiše
+selhalo zavírání klikem mimo — to bailuje na `event.target.closest('.menu')`, takže klepnutí
+na tlačítko druhé nabídky **nezavře** tu první a zůstanou otevřené obě. S jedním polem plyne
+vzájemná výlučnost ze tvaru stavu, není to pravidlo, na které se musí pamatovat.
+
+**Důsledky:**
+- `startGameWith()` už nezavírá nabídku samo. Zavření obstarává UI vrstva: `app.js` zavře
+  otevřenou nabídku při kliknutí kamkoli do `.menu-items`. Tím ani `openHelp()`
+  a `openAddDialog()` nemusí vědět, že je někdo volá z menu.
+- Rozlišuje se `.menu` (obal, na kterém bailuje zavírání klikem mimo) a `.menu-items`
+  (samotný seznam). Přepínací tlačítko je uvnitř `.menu`, ale ne v `.menu-items`.
+- Lišta je **sloupec** (`.top-bar-actions`), takže každá textová akce stojí řádek. Proto
+  jsou *Vrátit* a ⋮ vedle sebe v `.top-bar-icons` — dva řádky (88 px) místo čtyř.
+- *Vrátit* zůstalo mimo nabídku záměrně: je to náprava překlepu a taková, kterou je nutné
+  hledat, přestává být nápravou. Zmenšilo se na ikonu ↺ s `aria-label` a `title`.
+
+---
+
 ## 2. Struktura projektu
 
 Zrcadlí strukturu předlohy, aby šlo obojí srovnat vedle sebe:

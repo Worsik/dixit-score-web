@@ -3,7 +3,7 @@
 > Aktualizuje se po každém dokončeném kroku. Krok, po kterém tenhle soubor nesedí,
 > není hotový.
 
-**Poslední aktualizace:** 2026-08-15
+**Poslední aktualizace:** 2026-08-17
 
 ---
 
@@ -98,7 +98,16 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 - [x] `tools/dev-server.py` neutralizuje service worker, aby dev neladil starou verzi
 - [x] **Tažení funguje i v mřížce nad 6 hráčů** (vylepšení #4) — předloha to neuměla,
       takže u 7–12 hráčů bylo pořadí zamčené. `insertionTarget()` rozhoduje ve dvou osách.
-- [x] **Nápověda „Jak se hraje"** (vylepšení #12, AD-17) — dialog pod „?" u loga, kolo
+- [x] **Nabídka ⋮ v liště a *Nová hra* dostupná vždy** (vylepšení #13, AD-18, AD-19) —
+      sestava se dala vyměnit jen mazáním hráče po hráči, takže dialog sestavy byl
+      dosažitelný jednou za život. Vidět zůstalo *Další hra* a ikona ↺, ostatní se
+      seskupilo pod ⋮; lišta akcí spadla ze tří řádků na dva (88 px). Nová akce ve stavu
+      **nevznikla** — `confirmSetup()` sestavu odjakživa nahrazuje. `newGameMenuOpen`
+      nahradilo `openMenu`, aby se dvě nabídky nemohly otevřít zároveň.
+      Vedlejší nález: `.menu-item` měl 41 px, ne 44 — chyba byla v kódu už u seznamu
+      vypravěčů, ale začala vadit, až když se do menu přesunula tlačítka, která venku
+      44 px měla.
+- [x] **Nápověda „Jak se hraje"** (vylepšení #12, AD-17) — dialog (dnes v nabídce ⋮), kolo
       v šesti krocích s kreslenými SVG ilustracemi, konec kola i hry, dovětek o hře ve
       třech. Podklady vytěženy z pravidel ke krabici. Hlasovátka se kreslí **pod** kartami,
       ne na nich — žetony na kartách zobrazují odkrytí, ne tajnou volbu, a ilustrovaly by
@@ -149,6 +158,8 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 - Zda se dlaždice naposledy hraných vejdou nad klávesnici a dají se trefit prstem
 - Zda se do dialogu sestavy dá pohodlně psát a scrollovat sestavou při 12 hráčích
 - Zda je nápověda čitelná prstem — hlavně jestli jsou ilustrace poznat na malém displeji
+- Zda se ⋮ a ↺ vedle sebe dají trefit prstem, aniž by se mačkalo to druhé
+- Zda je *Vrátit* jako pouhá ikona ↺ pochopitelné bez popisku (na telefonu není `title`)
 - Zda drží displej rozsvícený (Safari až od iOS 16.4, v úsporném režimu selže)
 - Zda podržení na iOS nevyvolá kontextové menu
 - Zda instalace na plochu proběhne a aplikace se spustí bez adresního řádku
@@ -185,3 +196,4 @@ v [`BACKLOG.md`](BACKLOG.md).
 | 2026-08-17 | Dialog sestavy pro první hru (vylepšení #11, AD-15) — z pozorování uživatele |
 | 2026-08-17 | Oprava: kolečko v sestavě ukazovalo jinou barvu než paleta a karta |
 | 2026-08-17 | Nápověda „Jak se hraje" s kreslenými ilustracemi (vylepšení #12, AD-17) |
+| 2026-08-17 | Nabídka ⋮ v liště, *Nová hra* dostupná i s hráči (vylepšení #13, AD-18, AD-19) |

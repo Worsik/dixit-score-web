@@ -29,7 +29,9 @@ let state = {
   // Roster being composed before the first game; real players exist only on confirm,
   // so cancelling leaves no trace.
   setupDialog: { isOpen: false, draft: [] },
-  newGameMenuOpen: false,
+  // One field rather than a flag per dropdown: two menus in the bar must never be open
+  // at once, and this way that follows from the shape of the state (AD-19).
+  openMenu: null,           // null | 'new-game' | 'overflow'
   helpOpen: false,
   message: null,
 };
@@ -420,13 +422,13 @@ export function confirmSetup() {
 
 // --- New game ---
 
-export const toggleNewGameMenu = (isOpen) => update({ newGameMenuOpen: isOpen });
+/** Opens one dropdown and closes any other; null closes everything. */
+export const setOpenMenu = (which) => update({ openMenu: which });
 
 export const startGameWith = (playerId) =>
   update({
     players: startNewGame(state.players, playerId),
     roundNumber: 1,
-    newGameMenuOpen: false,
   });
 
 export const clearMessage = () => update({ message: null });
