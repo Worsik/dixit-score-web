@@ -44,44 +44,24 @@ body {
            0 calc(16px + env(safe-area-inset-left));
 }
 
-.top-bar-brand {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  min-width: 0;
-  max-width: 62%;
-}
-
 .top-bar img {
   height: 150px;
   max-width: 55%;
   object-fit: contain;
 }
 
-/* Logo se musí umět smrsknout, aby se vedle něj vešlo "?" - jinak na užším
-   telefonu (iPhone SE) přeteče z obalu a překryje tlačítka vpravo.
-   48px = tlačítko 44 + mezera 4. */
-.top-bar-brand img {
-  min-width: 0;
-  max-width: calc(100% - 48px);
-}
-
-.help-button {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--outline);
-  background: none;
-  color: var(--on-background);
-  font-size: 1.1rem;
-  padding: 0;
-}
-
 .top-bar-actions {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+}
+
+/* Vrátit a ⋮ sdílejí jeden řádek - lišta je sloupec, takže každá akce navíc
+   ji jinak prodlouží o dalších 44px na výšku. */
+.top-bar-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .bottom-bar {
@@ -393,16 +373,24 @@ dialog hr { width: 100%; border: none; border-top: 1px solid var(--outline); mar
 }
 
 .menu-item {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
   text-align: left;
   background: none;
   border: none;
   color: var(--on-background);
   padding: 10px 16px;
+  min-height: 44px;
 }
 
 .menu-item:hover { background: rgba(0, 0, 0, 0.08); }
+
+.menu-separator {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--outline);
+}
 
 /* --- Bodovací dialog --- */
 

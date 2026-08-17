@@ -34,6 +34,10 @@ jen vynuluje skóre. Bez konce hry neexistuje vítěz a není co počítat.
   uživatele, ale archivuje se i omylem rozehraná partie), nebo explicitně tlačítkem
   *Ukončit hru* (čistší data, krok navíc). Přiklání se k implicitnímu — smazání
   záznamu je stejně součástí zadání.
+  **Aktualizace 2026-08-17:** vylepšení #13 rozdělilo dvě věci, které dřív splývaly —
+  *Další hra* (stejná parta, vynulované skóre) a *Nová hra* (jiná parta). Archivovat se
+  má u **obojího**, ale *Nová hra* je navíc jasný signál „tahle parta skončila". Háček tu
+  tedy je; funkce se nedělá.
 - **Co se ukládá** — datum, jména, skóre, počet kol. Odvozené statistiky se počítají
   až při zobrazení, neukládají se.
 - **Rozsah mazání** — jednotlivý záznam, nebo i vynulování celé historie?

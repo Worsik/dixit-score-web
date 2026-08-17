@@ -49,6 +49,7 @@ export const STRINGS = {
     setup_start_button: 'Start game',
     setup_change_color: 'Change colour',
     setup_remove_player: 'Remove player',
+    menu_button: 'More',
 
     // "How to play" - written from the rulebook, no counterpart in the original.
     help_button: 'How to play',
@@ -131,6 +132,7 @@ export const STRINGS = {
     setup_start_button: 'Začít hru',
     setup_change_color: 'Změnit barvu',
     setup_remove_player: 'Odebrat hráče',
+    menu_button: 'Další volby',
 
     help_button: 'Jak se hraje',
     help_title: 'Jak se hraje',

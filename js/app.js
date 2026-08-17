@@ -6,7 +6,7 @@ import {
   openScoring, closeScoring, toggleVoter, selectAllVoters, confirmSelection,
   backToSelection, addBonusPlayer, removeBonusPlayer, incrementBonus, decrementBonus,
   confirmBonusVotes, backFromSummary, confirmScores,
-  toggleNewGameMenu, startGameWith, movePlayer,
+  setOpenMenu, startGameWith, movePlayer,
   openSetupDialog, closeSetupDialog, addDraftPlayer, removeDraftPlayer,
   cycleDraftColor, confirmSetup,
   makeStoryteller, undoLast, openHelp, closeHelp, clearMessage,
@@ -90,16 +90,22 @@ function showToast(text) {
 
 // --- Main screen ---
 
+/** A dropdown button toggles its own menu; opening one closes the other by itself. */
+const toggleMenu = (which) => setOpenMenu(getState().openMenu === which ? null : which);
+
 app.addEventListener('click', (event) => {
+  // Picking a command from a dropdown closes it. The document handler below cannot do it -
+  // the click lands inside .menu, where it deliberately bails out.
+  if (event.target.closest('.menu-items')) setOpenMenu(null);
+
   if (event.target.closest('[data-action="add-player"]')) return openAddDialog();
   if (event.target.closest('[data-action="scoring"]')) return openScoring();
   if (event.target.closest('[data-action="undo"]')) return undoLast();
   if (event.target.closest('[data-action="setup"]')) return openSetupDialog();
   if (event.target.closest('[data-action="help"]')) return openHelp();
 
-  if (event.target.closest('[data-action="new-game"]')) {
-    return toggleNewGameMenu(!getState().newGameMenuOpen);
-  }
+  if (event.target.closest('[data-action="new-game"]')) return toggleMenu('new-game');
+  if (event.target.closest('[data-action="overflow"]')) return toggleMenu('overflow');
 
   const menuChoice = event.target.closest('[data-new-game-player]');
   if (menuChoice) return startGameWith(menuChoice.dataset.newGamePlayer);
@@ -108,11 +114,11 @@ app.addEventListener('click', (event) => {
   if (card) openEditDialog(card.dataset.playerId);
 });
 
-// Clicking anywhere else closes the new game menu, like the original dropdown.
+// Clicking anywhere else closes the open menu, like the original dropdown.
 document.addEventListener('click', (event) => {
-  if (!getState().newGameMenuOpen) return;
+  if (!getState().openMenu) return;
   if (event.target.closest('.menu')) return;
-  toggleNewGameMenu(false);
+  setOpenMenu(null);
 });
 
 // --- How to play ---
