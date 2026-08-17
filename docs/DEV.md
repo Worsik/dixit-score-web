@@ -344,6 +344,65 @@ je, že se mění i popisek — jinak by tlačítko slibovalo něco jiného, ne�
 - Prázdný stav má **dvě znění** — s dlaždicemi a bez nich. Při úplně prvním spuštění
   není nad textem co vybírat, takže odkaz „vyberte nahoře" by byl lež.
 
+### AD-16: Bodování se nepřizpůsobuje výjimce pro tři hráče
+
+**Rozhodnutí:** Aplikace počítá bonusové body **vždy podle počtu hlasů**, i ve hře
+tří hráčů, kde pravidla říkají něco jiného. Vědomě neopravujeme.
+
+**Co pravidla říkají.** Ve třech se hraje se sedmi kartami, každý kromě vypravěče
+vykládá **dvě** karty (vedle desky je jich tedy 5) a při bodování dostane hráč
+**1 bonusový bod, pokud někdo hlasoval pro kteroukoli z jeho karet** — nezáleží pro
+kterou a nezáleží kolikrát.
+
+**Aplikace to počítá jinak.** `pointsToDistribute()` odvozuje rozpočet od počtu
+hlasujících, kteří netrefili, a `canConfirmBonusVotes()` vyžaduje rozdělení do
+posledního bodu. To v základní hře sedí přesně — každý chybný hlas padl na něčí kartu.
+
+⚠️ **Ve třech to umí zablokovat krok.** Oba hlasující netrefí → rozpočet 2 body. Když
+oba hlasy padnou na **dvě karty téhož hráče**, patří mu podle pravidel 1 bod, ale
+aplikace trvá na dvou a *Potvrdit* zůstane zakázané. Východisko je zrušit kolo
+a dopsat body přes kartu hráče.
+
+**Důvod, proč to zůstává.** Parta hraje upravený party mód pro velký počet hráčů, kde
+se na trojici nenarazí. Přizpůsobit rozpočet by znamenalo zavést do `rules.js` režim
+hry — tedy nové rozhodnutí ve stavu, nové větve v bodovacím dialogu a další věc, která
+se musí ukládat. Nepoměr k tomu, jak často to nastane.
+
+**Důsledky:**
+- **Tohle není chyba k opravě, je to rozhodnutí.** Kdo tenhle rozpor najde v pravidlech,
+  ať sáhne sem, ne do `rules.js`.
+- Nápověda „Jak se hraje" musí u trojice **říct nahlas**, že aplikace počítá bonusy za
+  každý hlas — jinak by uživatel věřil číslu, které podle pravidel nesedí.
+- Kdyby se trojice začala hrát, je to položka backlogu, ne záplata.
+
+### AD-17: Ilustrace nápovědy jsou kreslené SVG, ne obrázky
+
+**Rozhodnutí:** Nápověda „Jak se hraje" kreslí karty, hlasovátka i schéma bodování jako
+SVG psané rukou přímo v `js/ui/help-dialog.js`. Žádné stažené soubory.
+
+**Důvod:** Dva, oba tvrdé. **Licence** — ilustrace Dixitu jsou autorsky chráněné
+(Libellud) a publikovat je na veřejných Pages není šedá zóna. **Váha** — cokoli přibude,
+musí do `APP_SHELL`, a sadu ikon jsme kvůli offline režimu stlačovali z 2 MB na 132 kB
+(AD-10); pár skenů karet ten rozpočet rozbije.
+
+Vedlejší zjištění: pro výklad je abstrakce **srozumitelnější** než skutečná grafika.
+V obrázku jde o to, čí je která karta a kdo kam hlasoval, ne o to, co je na ní namalované.
+
+**Důsledky:**
+- Sada je **šest líců a jeden rub**, definované jako `<symbol>` a osazované přes `<use>`.
+  Sprite žije uvnitř dialogu, takže je v DOM jen když je nápověda otevřená.
+- Rub nese motiv z ikony aplikace a hlasovátka mají barvy hráčů z palety, malované
+  stejným 20% závojem jako karty (AD-16 sousedí — `swatchFill()`).
+- **Výklad používá příklad pro čtyři hráče.** Trojice je v pravidlech výjimka (sedm karet,
+  každý vykládá dvě), takže začínat jí by učilo základní postup špatně. Patří na konec
+  jako dovětek — a ten musí zmínit, že aplikace tam počítá bonusy jinak než pravidla
+  (AD-16).
+- ⚠️ **Hlasovátka se kreslí pod kartami, ne na nich.** Žetony ležící na kartách zobrazují
+  odkrytí, ne tajnou volbu — a ilustrovaly by přesně ten zlozvyk, před kterým ten krok
+  varuje: kdo položí lístek rovnou na kartu, napoví ostatním. Vyšlo to z pozorování
+  skutečné hry, ne z pravidel.
+- Scrolluje **obsah dialogu**, ne dialog celý, aby tlačítko *Zavřít* zůstalo na dosah.
+
 ---
 
 ## 2. Struktura projektu
@@ -365,6 +424,7 @@ js/i18n.js                    ≙ values/strings.xml, values-cs/strings.xml
 js/ui/game-screen.js          ≙ GameScreen.kt
 js/ui/player-card.js          ≙ PlayerRow
 js/ui/setup-dialog.js         sestava před první hrou (AD-15) — bez protějšku v předloze
+js/ui/help-dialog.js          nápověda Jak se hraje vč. kreslených ilustrací (AD-17)
 js/ui/add-player-dialog.js    ≙ AddPlayerDialog.kt
 js/ui/edit-player-dialog.js   ≙ EditPlayerDialog.kt
 js/ui/scoring-dialog.js       ≙ ScoringDialog.kt (3 kroky)

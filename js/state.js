@@ -30,6 +30,7 @@ let state = {
   // so cancelling leaves no trace.
   setupDialog: { isOpen: false, draft: [] },
   newGameMenuOpen: false,
+  helpOpen: false,
   message: null,
 };
 
@@ -429,3 +430,8 @@ export const startGameWith = (playerId) =>
   });
 
 export const clearMessage = () => update({ message: null });
+
+// --- How to play ---
+
+export const openHelp = () => update({ helpOpen: true });
+export const closeHelp = () => update({ helpOpen: false });

@@ -9,7 +9,7 @@ import {
   toggleNewGameMenu, startGameWith, movePlayer,
   openSetupDialog, closeSetupDialog, addDraftPlayer, removeDraftPlayer,
   cycleDraftColor, confirmSetup,
-  makeStoryteller, undoLast, clearMessage,
+  makeStoryteller, undoLast, openHelp, closeHelp, clearMessage,
 } from './state.js';
 import { t } from './i18n.js';
 import { attachReorder } from './ui/reorderable-list.js';
@@ -18,6 +18,7 @@ import { renderAddPlayerDialog } from './ui/add-player-dialog.js';
 import { renderEditPlayerDialog, renderConfirmDeleteDialog } from './ui/edit-player-dialog.js';
 import { renderScoringDialog } from './ui/scoring-dialog.js';
 import { renderSetupDialog } from './ui/setup-dialog.js';
+import { renderHelpDialog } from './ui/help-dialog.js';
 import { syncDialog } from './ui/dialog.js';
 import { keepScreenAwake } from './wake-lock.js';
 
@@ -28,6 +29,7 @@ const editDialog = document.querySelector('#edit-dialog');
 const confirmDeleteDialog = document.querySelector('#confirm-delete-dialog');
 const scoringDialog = document.querySelector('#scoring-dialog');
 const setupDialog = document.querySelector('#setup-dialog');
+const helpDialog = document.querySelector('#help-dialog');
 
 // --- Rendering ---
 
@@ -63,6 +65,8 @@ function render() {
     () => renderSetupDialog(state), ['setup-name']);
   refreshConfirmState(setupDialog, 'setup-name', 'setup-add');
 
+  syncDialog(helpDialog, state.helpOpen, renderHelpDialog);
+
   if (state.message) showToast(t(state.message));
 }
 
@@ -91,6 +95,7 @@ app.addEventListener('click', (event) => {
   if (event.target.closest('[data-action="scoring"]')) return openScoring();
   if (event.target.closest('[data-action="undo"]')) return undoLast();
   if (event.target.closest('[data-action="setup"]')) return openSetupDialog();
+  if (event.target.closest('[data-action="help"]')) return openHelp();
 
   if (event.target.closest('[data-action="new-game"]')) {
     return toggleNewGameMenu(!getState().newGameMenuOpen);
@@ -108,6 +113,18 @@ document.addEventListener('click', (event) => {
   if (!getState().newGameMenuOpen) return;
   if (event.target.closest('.menu')) return;
   toggleNewGameMenu(false);
+});
+
+// --- How to play ---
+
+helpDialog.addEventListener('click', (event) => {
+  if (event.target.closest('[data-action="help-close"]')) closeHelp();
+});
+
+helpDialog.addEventListener('submit', (event) => event.preventDefault());
+
+helpDialog.addEventListener('close', () => {
+  if (getState().helpOpen) closeHelp();
 });
 
 // --- Setup dialog ---

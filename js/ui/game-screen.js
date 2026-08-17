@@ -21,7 +21,11 @@ export function renderGameScreen(state) {
 
   return `
     <header class="top-bar">
-      <img src="icons/logo.jpg" alt="${t('app_name')}">
+      <div class="top-bar-brand">
+        <img src="icons/logo.jpg" alt="${t('app_name')}">
+        <button class="help-button" data-action="help" aria-label="${t('help_button')}"
+                title="${t('help_button')}">?</button>
+      </div>
       <div class="top-bar-actions">
         <div class="menu">
           <button class="button-text" data-action="${isFirstGame ? 'setup' : 'new-game'}">

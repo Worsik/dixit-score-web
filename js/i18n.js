@@ -49,6 +49,42 @@ export const STRINGS = {
     setup_start_button: 'Start game',
     setup_change_color: 'Change colour',
     setup_remove_player: 'Remove player',
+
+    // "How to play" - written from the rulebook, no counterpart in the original.
+    help_button: 'How to play',
+    help_title: 'How to play',
+    help_close: 'Close',
+    help_intro: 'A round of Dixit in six steps. The app only keeps score — '
+      + 'the cards and the clues stay on the table.',
+    help_step1_title: 'Six cards each',
+    help_step1_text: 'The first storyteller is whoever first thinks of a clue for one of them.',
+    help_step2_title: 'The storyteller gives a clue',
+    help_step2_text: 'They pick one card without showing it and say a clue aloud — a word or '
+      + 'a sentence. Made up or borrowed from a song, a film, a proverb. It may be sung or mimed.',
+    help_step3_title: 'Everyone else adds one card',
+    help_step3_text: 'The card from their hand that best fits the clue, passed to the '
+      + 'storyteller in secret. The storyteller shuffles them together with their own.',
+    help_step4_title: 'The cards are laid out',
+    help_step4_text: 'Face up, next to numbered spots. As many cards as there are players.',
+    help_step5_title: 'Everyone votes at once',
+    help_step5_text: 'Everyone but the storyteller sets their voting token to the number they '
+      + 'believe is the storyteller’s card. You may not vote for your own. The token stays with '
+      + 'you and is revealed only once everybody is ready — put it straight onto the card and '
+      + 'you have told everyone else the answer.',
+    help_step6_title: 'And then it counts up',
+    help_step6_text: 'This is the part the app does for you.',
+    help_round_title: 'End of the round',
+    help_round_text: 'Used cards are discarded and everyone draws back up to six. '
+      + 'The next storyteller is the player on the left — which is why the order in the list '
+      + 'matters, and why you can drag players around to match how you sit.',
+    help_end_title: 'End of the game',
+    help_end_text: 'Normally it ends when someone reaches 30 points. In party mode you play '
+      + 'until the cards run out; that mode ignores the player limit too, which is why the app '
+      + 'allows up to twelve.',
+    help_three_title: 'Playing with three',
+    help_three_text: 'You play with seven cards and everyone but the storyteller lays out two. '
+      + 'Careful: the app awards a bonus point per vote, while the rules give one point per '
+      + 'player however many votes their cards drew — so the scores need adjusting by hand.',
   },
   cs: {
     app_name: 'Dixit Skóre',
@@ -95,6 +131,42 @@ export const STRINGS = {
     setup_start_button: 'Začít hru',
     setup_change_color: 'Změnit barvu',
     setup_remove_player: 'Odebrat hráče',
+
+    help_button: 'Jak se hraje',
+    help_title: 'Jak se hraje',
+    help_close: 'Zavřít',
+    help_intro: 'Kolo Dixitu v šesti krocích. Aplikace jenom počítá body — '
+      + 'karty a nápovědy zůstávají na stole.',
+    help_step1_title: 'Každý drží šest karet',
+    help_step1_text: 'Vypravěčem prvního kola je ten, koho jako prvního napadne nápověda '
+      + 'k některé z nich.',
+    help_step2_title: 'Vypravěč řekne nápovědu',
+    help_step2_text: 'Jednu kartu si vybere a neukáže ji. Nahlas k ní řekne nápovědu — slovo '
+      + 'nebo větu. Vymyšlenou i vypůjčenou z písně, filmu nebo přísloví. Klidně zazpívanou '
+      + 'nebo zahranou pantomimicky.',
+    help_step3_title: 'Ostatní přihodí po jedné kartě',
+    help_step3_text: 'Tu ze své ruky, která nápovědě podle nich odpovídá nejlíp. Tajně ji podají '
+      + 'vypravěči a ten ji zamíchá se svou.',
+    help_step4_title: 'Karty se rozloží k číslům',
+    help_step4_text: 'Lícem nahoru k očíslovaným místům. Kolik hráčů, tolik karet.',
+    help_step5_title: 'Hlasuje se najednou',
+    help_step5_text: 'Každý kromě vypravěče nastaví svůj hlasovací lístek na číslo karty, '
+      + 'o které si myslí, že je vypravěčova. Pro vlastní kartu hlasovat nelze. Lístek zůstává '
+      + 'u vás a odkrývá se až ve chvíli, kdy jsou hotoví všichni — kdo ho položí rovnou na '
+      + 'kartu, napoví ostatním.',
+    help_step6_title: 'A pak se počítá',
+    help_step6_text: 'Tohle je jediná část, kterou za vás udělá aplikace.',
+    help_round_title: 'Konec kola',
+    help_round_text: 'Použité karty se odloží a každý si dobere zpět na šest. Vypravěčem dalšího '
+      + 'kola je hráč po levici — proto v seznamu záleží na pořadí a proto jde hráče přeskupit '
+      + 'tažením podle toho, jak sedíte.',
+    help_end_title: 'Konec hry',
+    help_end_text: 'Standardně končí, jakmile někdo dosáhne 30 bodů. V party módu se hraje, '
+      + 'dokud nedojdou karty; ten neřeší ani počet hráčů, proto aplikace pouští až dvanáct.',
+    help_three_title: 'Hra ve třech',
+    help_three_text: 'Hraje se se sedmi kartami a každý kromě vypravěče vykládá dvě. Pozor: '
+      + 'aplikace přiděluje bonusový bod za každý hlas, kdežto pravidla dávají 1 bod na hráče '
+      + 'bez ohledu na počet hlasů — body je pak potřeba dorovnat ručně.',
   },
 };
 

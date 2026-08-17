@@ -44,10 +44,38 @@ body {
            0 calc(16px + env(safe-area-inset-left));
 }
 
+.top-bar-brand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 62%;
+}
+
 .top-bar img {
   height: 150px;
   max-width: 55%;
   object-fit: contain;
+}
+
+/* Logo se musí umět smrsknout, aby se vedle něj vešlo "?" - jinak na užším
+   telefonu (iPhone SE) přeteče z obalu a překryje tlačítka vpravo.
+   48px = tlačítko 44 + mezera 4. */
+.top-bar-brand img {
+  min-width: 0;
+  max-width: calc(100% - 48px);
+}
+
+.help-button {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--outline);
+  background: none;
+  color: var(--on-background);
+  font-size: 1.1rem;
+  padding: 0;
 }
 
 .top-bar-actions {
@@ -199,6 +227,66 @@ dialog hr { width: 100%; border: none; border-top: 1px solid var(--outline); mar
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* --- Nápověda Jak se hraje --- */
+
+.help-sprite { position: absolute; width: 0; height: 0; }
+
+/* Výklad je dlouhý, takže scrolluje obsah, ne celý dialog - tlačítko Zavřít
+   tak zůstane na dosah bez odrolování na konec. */
+.help-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 62vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.help-intro { margin: 0; font-size: 0.95rem; }
+
+.help-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: help;
+}
+
+.help-step {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  gap: 2px 8px;
+  align-items: start;
+}
+
+.help-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  opacity: 0.55;
+}
+
+.help-step h3, .help-note h3 { margin: 0; font-size: 1rem; }
+.help-step p, .help-note p { margin: 0; font-size: 0.9rem; }
+.help-step p { grid-column: 2; }
+
+.help-art {
+  grid-column: 1 / -1;
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 8px;
+}
+
+.help-note {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid var(--outline);
+  padding-top: 12px;
 }
 
 /* --- Dialog sestavy --- */

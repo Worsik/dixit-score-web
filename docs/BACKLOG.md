@@ -6,7 +6,7 @@
 > Co je hotové, patří do [`SPEC.md`](SPEC.md); co se zrovna dělá, do
 > [`CURRENT.md`](CURRENT.md).
 
-**Poslední aktualizace:** 2026-08-17
+**Poslední aktualizace:** 2026-08-17 *(podklady k nápovědě vytěženy z pravidel ke krabici)*
 
 ---
 
@@ -93,6 +93,26 @@ stejně jako se dnes označuje vypravěč.
 
 *(Zbylo jako jediné neudělané z rozboru z 2026-08-15 — mění vzhled karty, takže
 by se to mělo nejdřív vidět.)*
+
+---
+
+## 10. ~~Nápověda „Jak se hraje"~~ — **hotovo 2026-08-17**
+
+Vylepšení #12 v [`SPEC.md`](SPEC.md), rozhodnutí o ilustracích v [`DEV.md`](DEV.md),
+AD-17. Dialog pod „?" u loga, příklad pro čtyři hráče, dovětek o hře ve třech
+i s upozorněním na AD-16.
+
+---
+
+## 11. Bodování pro tři hráče podle pravidel
+
+**Odloženo rozhodnutím** — viz [`DEV.md`](DEV.md), AD-16. Zapsáno sem, aby se z toho
+nestala „chyba k opravě": aplikace počítá bonusy za každý hlas, pravidla u trojice
+dávají 1 bod na hráče bez ohledu na počet hlasů. Ve výjimečném případě to umí
+zablokovat potvrzení kola.
+
+Řešit až kdyby se trojice začala hrát. Znamenalo by to zavést do aplikace pojem
+režimu hry, ne jen upravit vzorec.
 
 ---
 

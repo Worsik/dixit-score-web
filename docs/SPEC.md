@@ -46,6 +46,8 @@ se vědomě. Každý rozdíl proti předloze patří sem — jinak neexistuje.
 
 | 11 | doplněná funkce | **Nová hra** s prázdným seznamem otevře **prázdné menu** — slepá ulička (stejně v předloze, `GameScreen.kt:130` nemá `enabled`) | Bez hráčů se tlačítko jmenuje **Nová hra** a otevře **dialog sestavy**; s hráči se jmenuje **Další hra** a chová se jako dřív | Skutečný uživatel na *Novou hru* sáhl jako na první věc v aplikaci — je to nejpřirozenější první krok, ale prvním krokem bylo *Přidat hráče*. Dialog navíc nahradí šest průchodů modálem jedním místem. |
 
+| 12 | doplněná funkce | Aplikace nikde neřekne, jak se hraje | Dialog **Jak se hraje** pod „?" u loga — kolo v šesti krocích s kreslenými ilustracemi, konec kola i hry a dovětek o hře ve třech | Appka umí počítat, ale pravidla nechává na krabici. Ilustrace jsou **SVG kreslené v kódu**, ne skeny — grafika Dixitu je autorsky chráněná a stažené obrázky by rozbily rozpočet offline cache (AD-10). |
+
 **Pravidlo:** předloha je výchozí bod, ne strop. Vylepšení jsou vítaná, ale musí být
 **vyžádaná nebo odsouhlasená** a zapsaná do této tabulky. Co se jeví jako chyba předlohy,
 se nadále **nemá tiše replikovat ani tiše opravovat** — nahlas se to pojmenuje a rozhodne.
