@@ -334,6 +334,13 @@ je, že se mění i popisek — jinak by tlačítko slibovalo něco jiného, ne�
   palety, ne herních pravidel). Klepnutí na kolečko cyklí na další barvu, kterou nikdo
   jiný nemá. Celou dvanáctibarevnou paletu do řádku necpeme; konkrétní odstín se doklikne
   přes kartu hráče, kde paleta už je.
+- ⚠️ **Vzorek barvy se vždy maluje přes `swatchFill()`.** Barva se všude ukazuje jako
+  20% závoj, protože tak nakonec vypadá karta hráče. Kdo ji nakreslí na plno, ukáže
+  jinou barvu, než jaká se vybírá: `#0000FF` je sytě modrá, ale ve 20 % vyjde
+  tyrkysová. Přesně to se stalo — pravidlo bylo vepsané v `color-picker.js` a dialog
+  sestavy se s ním rozešel. Proto je v `palette.js` a je pokryté testy.
+- Řádek sestavy **není podbarvený**. Kdyby byl, splynul by s vlastním kolečkem, které
+  má tutéž barvu ve stejné intenzitě. Barvu tedy nese kolečko, stejně jako v paletě.
 - Prázdný stav má **dvě znění** — s dlaždicemi a bez nich. Při úplně prvním spuštění
   není nad textem co vybírat, takže odkaz „vyberte nahoře" by byl lež.
 

@@ -1,6 +1,22 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { PALETTE, nextFreeColor } from '../js/palette.js';
+import { PALETTE, OPAQUE_COLORS, nextFreeColor, swatchFill } from '../js/palette.js';
+
+// --- swatchFill ---
+
+test('běžná barva se maluje na 20 % průhlednosti', () => {
+  assert.equal(swatchFill('#FF0000'), '#FF000033');
+});
+
+test('bílá a černá zůstávají plné', () => {
+  for (const color of OPAQUE_COLORS) assert.equal(swatchFill(color), color);
+});
+
+test('každá barva palety dá neprázdný výsledek', () => {
+  for (const color of PALETTE) assert.match(swatchFill(color), /^#[0-9A-F]{6}(33)?$/);
+});
+
+// --- nextFreeColor ---
 
 test('bez použitých barev vrátí první z palety', () => {
   assert.equal(nextFreeColor([]), PALETTE[0]);

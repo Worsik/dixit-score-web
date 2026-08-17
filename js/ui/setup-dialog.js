@@ -1,6 +1,7 @@
 import { t } from '../i18n.js';
 import { suggest } from '../known-players.js';
 import { MAX_PLAYERS } from '../rules.js';
+import { swatchFill } from '../palette.js';
 import { escapeHtml, withAlpha } from './html.js';
 
 /** Recent names, minus anyone already on the roster being composed. */
@@ -31,9 +32,9 @@ function renderDraft(draft, hasSuggestions) {
   }
 
   const rows = draft.map((player, index) => `
-    <li class="setup-row" style="background: ${withAlpha(player.color, 0.2)}">
+    <li class="setup-row">
       <button type="button" class="setup-swatch" data-setup-cycle="${index}"
-              style="background: ${player.color}"
+              style="background: ${swatchFill(player.color)}"
               aria-label="${t('setup_change_color')}"></button>
       <span class="setup-name">${escapeHtml(player.name)}</span>
       <button type="button" class="icon-button" data-setup-remove="${index}"

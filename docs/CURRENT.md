@@ -68,7 +68,7 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
       včetně blokace potvrzení, návrat ze souhrnu zachová bonusy, zrušení nic nezapíše,
       nová hra vynuluje skóre a nastaví vypravěče, okrajové stavy (0 hráčů, 1 hráč)
 
-**Testy: 65, všechny zelené.**
+**Testy: 68, všechny zelené.**
 
 ### Etapa 3
 
@@ -98,6 +98,12 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 - [x] `tools/dev-server.py` neutralizuje service worker, aby dev neladil starou verzi
 - [x] **Tažení funguje i v mřížce nad 6 hráčů** (vylepšení #4) — předloha to neuměla,
       takže u 7–12 hráčů bylo pořadí zamčené. `insertionTarget()` rozhoduje ve dvou osách.
+- [x] **Kolečko v dialogu sestavy ukazovalo jinou barvu, než jaká se vybírala** —
+      malovalo se na plno, zatímco paleta i karta hráče barvu ukazují jako 20% závoj.
+      Modrá `#0000FF` tak v sestavě vypadala sytě modře, ale na kartě tyrkysově.
+      Pravidlo bylo vepsané v `color-picker.js`; vytaženo do `swatchFill()`
+      v `palette.js` a pokryto testy. Ověřeno, že kolečko, karta i vybrané políčko
+      palety dávají shodně `rgba(0, 0, 255, 0.2)`.
 - [x] **Dialog sestavy pro první hru** (vylepšení #11, AD-15) — *Nová hra* bez hráčů
       otevírala prázdné menu, což byla zděděná vada z předlohy; skutečný uživatel na
       to tlačítko sáhl jako na první věc v aplikaci. Teď se skládá celá sestava na
@@ -168,3 +174,4 @@ v [`BACKLOG.md`](BACKLOG.md).
 | 2026-08-17 | Rozbor UX a dávka vylepšení #6–#10 (vrátit kolo, vypravěč, wake lock, dotykové plochy) |
 | 2026-08-17 | Undo předěláno na univerzální — vrací poslední změnu, ať byla jakákoli |
 | 2026-08-17 | Dialog sestavy pro první hru (vylepšení #11, AD-15) — z pozorování uživatele |
+| 2026-08-17 | Oprava: kolečko v sestavě ukazovalo jinou barvu než paleta a karta |
