@@ -10,6 +10,20 @@ export const DEFAULT_COLOR = '#888888';
 export const OPAQUE_COLORS = ['#FFFFFF', '#000000'];
 
 /**
+ * How a palette colour is painted wherever it is shown as a sample.
+ *
+ * The 20% wash is what the player card ends up looking like, so a swatch drawn at full
+ * strength shows a different colour than the one being picked - #0000FF reads as solid
+ * blue on its own but turquoise at 20%. Kept here, in one place, because it was
+ * previously inlined in the colour picker and got out of step with the setup dialog.
+ *
+ * 0x33 of 255 is exactly 0.2, so this matches withAlpha(color, 0.2).
+ */
+export function swatchFill(color) {
+  return OPAQUE_COLORS.includes(color) ? color : `${color}33`;
+}
+
+/**
  * The first palette colour nobody is using yet.
  *
  * Used when building a roster: picking a colour for each of six players by hand is
