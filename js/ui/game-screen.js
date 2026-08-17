@@ -15,12 +15,18 @@ function renderNewGameMenu(state) {
 }
 
 export function renderGameScreen(state) {
+  // With nobody on the list there is no storyteller to pick, so the button opens the
+  // setup dialog instead of an empty menu; with players it resets the scores as before.
+  const isFirstGame = state.players.length === 0;
+
   return `
     <header class="top-bar">
       <img src="icons/logo.jpg" alt="${t('app_name')}">
       <div class="top-bar-actions">
         <div class="menu">
-          <button class="button-text" data-action="new-game">${t('new_game')}</button>
+          <button class="button-text" data-action="${isFirstGame ? 'setup' : 'new-game'}">
+            ${isFirstGame ? t('new_game') : t('next_game')}
+          </button>
           ${renderNewGameMenu(state)}
         </div>
         <button class="button-text" data-action="add-player">${t('add_player')}</button>

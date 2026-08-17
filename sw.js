@@ -2,7 +2,7 @@
 //
 // IMPORTANT: bump CACHE_VERSION on every deploy. Installed apps serve from their own
 // cache, so without a new version users would keep running the old code forever.
-const CACHE_VERSION = 'v7';
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = `dixit-score-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -23,6 +23,7 @@ const APP_SHELL = [
   'js/ui/game-screen.js',
   'js/ui/player-card.js',
   'js/ui/color-picker.js',
+  'js/ui/setup-dialog.js',
   'js/ui/add-player-dialog.js',
   'js/ui/edit-player-dialog.js',
   'js/ui/scoring-dialog.js',

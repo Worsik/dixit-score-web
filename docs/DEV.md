@@ -303,6 +303,40 @@ důvod, proč se to zapíná.
 - V úsporném režimu iOS požadavek selže. Musí to zůstat bez následku.
 - Safari až od iOS 16.4; na starším iPhonu se prostě nic nestane.
 
+### AD-15: Dialog sestavy a dvourežimové tlačítko
+
+**Rozhodnutí:** Tlačítko v horní liště má dva režimy podle toho, jestli jsou hráči.
+Bez hráčů je to **Nová hra** a otevře dialog sestavy; s hráči **Další hra** a otevře
+dosavadní menu s výběrem vypravěče.
+
+**Důvod:** *Nová hra* je pro nového uživatele nejpřirozenější první krok, ale bez hráčů
+otevřela prázdné menu — slepá ulička. Předloha to má stejně (`GameScreen.kt:130`,
+`TextButton` bez `enabled`, `DropdownMenu` nad prázdným `players.forEach`), takže to
+nebyla regrese, ale zděděná vada.
+
+Zakázat tlačítko by uličku odstranilo, ale nováčkovi by nic neporadilo. Dialog sestavy
+řeší obojí — a navíc nahradí šest průchodů modálem *Přidat hráče* jedním místem.
+
+**Jedno tlačítko ve dvou režimech je obecně varovný signál**, tady ale obstojí: obojí je
+„připrav další hru", jen se jednou vybírá *kdo hraje* a podruhé *kdo vypráví*. Podmínkou
+je, že se mění i popisek — jinak by tlačítko slibovalo něco jiného, než udělá. Řetězec
+`next_game` proto v předloze nemá protějšek.
+
+**Důsledky:**
+- **Sestava se skládá do konceptu** (`setupDialog.draft`), skuteční hráči vzniknou až
+  potvrzením. *Zrušit* tak nenechá stopu — ani hráče, ani zapamatovaná jména.
+- **Potvrzení jde přes `update()` s `players`, takže je rovnou vratné** tlačítkem
+  *Vrátit* — bez řádku kódu navíc (AD-13).
+- **Vznikly dvě cesty, jak založit hráče.** Dialog *Přidat hráče* zůstává, protože někdo
+  dorazí uprostřed partie. Sdílí se paleta, dlaždice naposledy hraných i pravidla
+  z `rules.js`, takže se nemůže rozejít logika — dvojí zůstává jen markup.
+- **Barvy přiděluje `nextFreeColor()`** v `palette.js` (ne v `rules.js` — je to věc
+  palety, ne herních pravidel). Klepnutí na kolečko cyklí na další barvu, kterou nikdo
+  jiný nemá. Celou dvanáctibarevnou paletu do řádku necpeme; konkrétní odstín se doklikne
+  přes kartu hráče, kde paleta už je.
+- Prázdný stav má **dvě znění** — s dlaždicemi a bez nich. Při úplně prvním spuštění
+  není nad textem co vybírat, takže odkaz „vyberte nahoře" by byl lež.
+
 ---
 
 ## 2. Struktura projektu
@@ -323,6 +357,7 @@ js/wake-lock.js               držení displeje rozsvíceného (AD-14)
 js/i18n.js                    ≙ values/strings.xml, values-cs/strings.xml
 js/ui/game-screen.js          ≙ GameScreen.kt
 js/ui/player-card.js          ≙ PlayerRow
+js/ui/setup-dialog.js         sestava před první hrou (AD-15) — bez protějšku v předloze
 js/ui/add-player-dialog.js    ≙ AddPlayerDialog.kt
 js/ui/edit-player-dialog.js   ≙ EditPlayerDialog.kt
 js/ui/scoring-dialog.js       ≙ ScoringDialog.kt (3 kroky)

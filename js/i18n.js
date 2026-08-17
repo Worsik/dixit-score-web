@@ -43,6 +43,12 @@ export const STRINGS = {
     undo_hint: 'Takes back the last change',
     make_storyteller_button: 'Make storyteller',
     no_players_for_scoring: 'Add players first',
+    next_game: 'Next Game',
+    setup_empty: 'Pick players above, or type a new name.',
+    setup_empty_first: 'Type the first player’s name.',
+    setup_start_button: 'Start game',
+    setup_change_color: 'Change colour',
+    setup_remove_player: 'Remove player',
   },
   cs: {
     app_name: 'Dixit Skóre',
@@ -83,6 +89,12 @@ export const STRINGS = {
     undo_hint: 'Vrátí poslední změnu',
     make_storyteller_button: 'Udělat vypravěčem',
     no_players_for_scoring: 'Nejdřív přidejte hráče',
+    next_game: 'Další hra',
+    setup_empty: 'Vyberte hráče nahoře, nebo napište nové jméno.',
+    setup_empty_first: 'Napište jméno prvního hráče.',
+    setup_start_button: 'Začít hru',
+    setup_change_color: 'Změnit barvu',
+    setup_remove_player: 'Odebrat hráče',
   },
 };
 
