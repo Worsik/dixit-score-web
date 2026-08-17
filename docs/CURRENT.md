@@ -98,6 +98,14 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 - [x] `tools/dev-server.py` neutralizuje service worker, aby dev neladil starou verzi
 - [x] **Tažení funguje i v mřížce nad 6 hráčů** (vylepšení #4) — předloha to neuměla,
       takže u 7–12 hráčů bylo pořadí zamčené. `insertionTarget()` rozhoduje ve dvou osách.
+- [x] **Nápověda „Jak se hraje"** (vylepšení #12, AD-17) — dialog pod „?" u loga, kolo
+      v šesti krocích s kreslenými SVG ilustracemi, konec kola i hry, dovětek o hře ve
+      třech. Podklady vytěženy z pravidel ke krabici. Hlasovátka se kreslí **pod** kartami,
+      ne na nich — žetony na kartách zobrazují odkrytí, ne tajnou volbu, a ilustrovaly by
+      zlozvyk, před kterým ten krok varuje.
+- [x] **Rozhodnutí o hře ve třech** (AD-16) — pravidla dávají 1 bonusový bod na hráče,
+      aplikace počítá za každý hlas. **Vědomě neopravujeme**, party mód se ve třech nehraje.
+      Zapsáno, aby to někdo napříště nevzal jako chybu k opravě.
 - [x] **Kolečko v dialogu sestavy ukazovalo jinou barvu, než jaká se vybírala** —
       malovalo se na plno, zatímco paleta i karta hráče barvu ukazují jako 20% závoj.
       Modrá `#0000FF` tak v sestavě vypadala sytě modře, ale na kartě tyrkysově.
@@ -140,6 +148,7 @@ Vyzkoušet aplikaci na iPhonu — instalace přes Safari, offline běh, tažení
 - Zda tažení prstem nekoliduje se scrollováním (AD-9)
 - Zda se dlaždice naposledy hraných vejdou nad klávesnici a dají se trefit prstem
 - Zda se do dialogu sestavy dá pohodlně psát a scrollovat sestavou při 12 hráčích
+- Zda je nápověda čitelná prstem — hlavně jestli jsou ilustrace poznat na malém displeji
 - Zda drží displej rozsvícený (Safari až od iOS 16.4, v úsporném režimu selže)
 - Zda podržení na iOS nevyvolá kontextové menu
 - Zda instalace na plochu proběhne a aplikace se spustí bez adresního řádku
@@ -175,3 +184,4 @@ v [`BACKLOG.md`](BACKLOG.md).
 | 2026-08-17 | Undo předěláno na univerzální — vrací poslední změnu, ať byla jakákoli |
 | 2026-08-17 | Dialog sestavy pro první hru (vylepšení #11, AD-15) — z pozorování uživatele |
 | 2026-08-17 | Oprava: kolečko v sestavě ukazovalo jinou barvu než paleta a karta |
+| 2026-08-17 | Nápověda „Jak se hraje" s kreslenými ilustracemi (vylepšení #12, AD-17) |
